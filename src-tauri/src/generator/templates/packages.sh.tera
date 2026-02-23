@@ -1,0 +1,41 @@
+########################################################################
+# 2/13 — Packages (batched brew install)
+########################################################################
+print_header "2/13 — Packages"
+
+brew_packages=(
+{% for pkg in config.packages.packages %}{% if pkg.enabled %}  {{ pkg.name }}
+{% endif %}{% endfor %})
+
+to_install=()
+already=0
+for pkg in "${brew_packages[@]}"; do
+  if brew list --formula "$pkg" &>/dev/null 2>&1 || brew list --cask "$pkg" &>/dev/null 2>&1; then
+    ((already++))
+  else
+    to_install+=("$pkg")
+  fi
+done
+
+[[ $already -gt 0 ]] && print_skip "$already packages already installed"
+
+if [[ ${#to_install[@]} -gt 0 ]]; then
+  print_step "Installing ${#to_install[@]} packages: ${to_install[*]}"
+  if brew install "${to_install[@]}" 2>/dev/null; then
+    print_step "All ${#to_install[@]} packages installed"
+  else
+    print_warn "Some packages may have failed — run 'brew install <pkg>' to troubleshoot"
+  fi
+else
+  print_skip "All packages already installed"
+fi
+
+# ── Fonts (fast filesystem detection) ─────────────────────────────
+{% if config.packages.install_jetbrains_font %}
+if ! font_installed "JetBrains"; then
+  brew install --cask font-jetbrains-mono{% if config.packages.install_nerd_font %} font-jetbrains-mono-nerd-font{% endif %} 2>/dev/null \
+    && print_step "JetBrains Mono{% if config.packages.install_nerd_font %} + Nerd Font{% endif %}" || print_warn "JetBrains Mono install failed"
+else
+  print_skip "JetBrains Mono"
+fi
+{% endif %}

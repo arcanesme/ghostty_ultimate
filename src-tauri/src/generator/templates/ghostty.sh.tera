@@ -1,0 +1,150 @@
+########################################################################
+# 3/13 — Ghostty Config
+########################################################################
+print_header "3/13 — Ghostty Config"
+GHOSTTY_DIR="$HOME/.config/ghostty"
+GHOSTTY_MACOS_CONFIG="$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+
+if [[ -f "$GHOSTTY_MACOS_CONFIG" ]]; then
+  cp "$GHOSTTY_MACOS_CONFIG" "${GHOSTTY_MACOS_CONFIG}${BACKUP_SUFFIX}" 2>/dev/null || true
+  rm -f "$GHOSTTY_MACOS_CONFIG"
+  print_step "Removed legacy macOS Ghostty config (backed up)"
+else
+  print_skip "No legacy macOS Ghostty config"
+fi
+
+mkdir -p "$GHOSTTY_DIR/shaders" "$GHOSTTY_DIR/themes"
+
+cat > "$GHOSTTY_DIR/themes/ayu-dark" << 'THEME'
+palette = 0={{ palette.surface }}
+palette = 1={{ palette.red }}
+palette = 2={{ palette.green }}
+palette = 3={{ palette.yellow }}
+palette = 4={{ palette.blue }}
+palette = 5={{ palette.purple }}
+palette = 6={{ palette.cyan }}
+palette = 7=#c7c7c7
+palette = 8={{ palette.comment }}
+palette = 9={{ palette.br_red }}
+palette = 10={{ palette.br_green }}
+palette = 11={{ palette.orange }}
+palette = 12={{ palette.br_blue }}
+palette = 13={{ palette.br_purple }}
+palette = 14={{ palette.br_cyan }}
+palette = 15=#ffffff
+background = {{ palette.bg }}
+foreground = {{ palette.fg }}
+cursor-color = {{ palette.fg }}
+cursor-text = {{ palette.bg }}
+selection-background = {{ palette.selection }}
+selection-foreground = {{ palette.fg }}
+THEME
+print_step "Ayu Dark theme file"
+
+cat > "$GHOSTTY_DIR/config" << 'GC'
+theme = ayu-dark
+
+# ── Typography ────────────────────────────────────────────────────
+font-family             = {{ config.ghostty.font_family }}
+{% if config.ghostty.font_family_bold %}font-family-bold        = {{ config.ghostty.font_family_bold }}
+{% endif %}{% if config.ghostty.font_family_italic %}font-family-italic      = {{ config.ghostty.font_family_italic }}
+{% endif %}{% if config.ghostty.font_family_bold_italic %}font-family-bold-italic = {{ config.ghostty.font_family_bold_italic }}
+{% endif %}font-size               = {{ config.ghostty.font_size }}
+{% if config.ghostty.font_style %}
+font-style              = {{ config.ghostty.font_style }}
+{% endif %}{% if config.ghostty.font_style_bold %}
+font-style-bold         = {{ config.ghostty.font_style_bold }}
+{% endif %}{% if config.ghostty.font_style_italic %}
+font-style-italic       = {{ config.ghostty.font_style_italic }}
+{% endif %}
+{% for feature in config.ghostty.font_features %}font-feature = {{ feature }}
+{% endfor %}{% for variation in config.ghostty.font_variation %}font-variation = {{ variation }}
+{% endfor %}font-thicken = {{ config.ghostty.font_thicken | bool_to_str }}
+
+# ── Window & Padding ─────────────────────────────────────────────
+window-padding-x        = {{ config.ghostty.window_padding_x }}
+window-padding-y        = {{ config.ghostty.window_padding_y }}
+window-padding-balance  = {{ config.ghostty.window_padding_balance | bool_to_str }}
+
+macos-titlebar-style    = {{ config.ghostty.macos_titlebar_style }}
+macos-titlebar-proxy-icon = {{ config.ghostty.macos_titlebar_proxy_icon }}
+macos-window-shadow     = {{ config.ghostty.macos_window_shadow | bool_to_str }}
+window-colorspace       = {{ config.ghostty.window_colorspace }}
+confirm-close-surface   = {{ config.ghostty.confirm_close_surface }}
+window-decoration       = {{ config.ghostty.window_decoration }}
+mouse-hide-while-typing = {{ config.ghostty.mouse_hide_while_typing | bool_to_str }}
+
+# ── Background ────────────────────────────────────────────────────
+background-opacity      = {{ config.ghostty.background_opacity }}
+background-blur         = {{ config.ghostty.background_blur }}
+unfocused-split-opacity = {{ config.ghostty.unfocused_split_opacity }}
+minimum-contrast        = {{ config.ghostty.minimum_contrast }}
+bold-is-bright          = {{ config.ghostty.bold_is_bright | bool_to_str }}
+
+# ── Cursor ────────────────────────────────────────────────────────
+cursor-style            = {{ config.ghostty.cursor_style }}
+{% if config.ghostty.cursor_style_blink %}cursor-style-blink      = {{ config.ghostty.cursor_style_blink | bool_to_str }}
+{% endif %}cursor-opacity          = {{ config.ghostty.cursor_opacity }}
+cursor-click-to-move    = {{ config.ghostty.cursor_click_to_move | bool_to_str }}
+
+# ── Cell Spacing ──────────────────────────────────────────────────
+adjust-cell-height      = {{ config.ghostty.adjust_cell_height }}
+freetype-load-flags     = {{ config.ghostty.freetype_load_flags }}
+
+# ── Scroll ────────────────────────────────────────────────────────
+scrollback-limit        = {{ config.ghostty.scrollback_limit }}
+{% for kb in config.ghostty.keybinds %}{% if kb.action is containing("scroll") %}keybind = {{ kb.key }}={{ kb.action }}
+{% endif %}{% endfor %}
+shell-integration       = {{ config.ghostty.shell_integration }}
+clipboard-read          = {{ config.ghostty.clipboard_read }}
+clipboard-write         = {{ config.ghostty.clipboard_write }}
+{% if config.ghostty.custom_shader_enabled %}
+custom-shader           = {{ config.ghostty.custom_shader_path }}
+{% endif %}macos-option-as-alt     = {{ config.ghostty.macos_option_as_alt | bool_to_str }}
+
+# ── Keybinds ──────────────────────────────────────────────────────
+{% for kb in config.ghostty.keybinds %}{% if kb.action is not containing("scroll") %}keybind = {{ kb.key }}={{ kb.action }}
+{% endif %}{% endfor %}GC
+print_step "Ghostty config written"
+
+{% if config.ghostty.custom_shader_enabled %}
+cat > "$GHOSTTY_DIR/shaders/vignette-bloom.glsl" << 'SHADER'
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    vec4 base = texture(iChannel0, uv);
+
+    float offset = 1.5 / iResolution.x;
+    float offsetY = 1.5 / iResolution.y;
+    vec4 bloom = vec4(0.0);
+    bloom += texture(iChannel0, uv + vec2(-offset,  0.0));
+    bloom += texture(iChannel0, uv + vec2( offset,  0.0));
+    bloom += texture(iChannel0, uv + vec2( 0.0,    -offsetY));
+    bloom += texture(iChannel0, uv + vec2( 0.0,     offsetY));
+    bloom += texture(iChannel0, uv + vec2(-offset, -offsetY));
+    bloom += texture(iChannel0, uv + vec2( offset,  offsetY));
+    bloom += texture(iChannel0, uv + vec2( offset, -offsetY));
+    bloom += texture(iChannel0, uv + vec2(-offset,  offsetY));
+    bloom /= 8.0;
+    float brightness = dot(bloom.rgb, vec3(0.2126, 0.7152, 0.0722));
+    float bloomStrength = smoothstep(0.45, 0.85, brightness) * 0.09;
+
+    vec2 centered = uv * 2.0 - 1.0;
+    float vignette = 1.0 - dot(centered * vec2(0.35, 0.50), centered * vec2(0.35, 0.50));
+    vignette = clamp(pow(vignette, 0.8), 0.0, 1.0);
+    vignette = mix(0.85, 1.0, vignette);
+
+    fragColor = (base + bloom * bloomStrength) * vignette;
+    fragColor.a = base.a;
+}
+SHADER
+print_step "Vignette-bloom shader"
+{% endif %}
+
+{% if config.ghostty.install_community_shaders %}
+if [[ ! -d "$GHOSTTY_DIR/shaders/ghostty-shaders" ]]; then
+  git clone --depth 1 https://github.com/0xhckr/ghostty-shaders.git "$GHOSTTY_DIR/shaders/ghostty-shaders" 2>/dev/null \
+    && print_step "Community shaders" || print_warn "Community shaders clone failed"
+else
+  print_skip "Community shaders"
+fi
+{% endif %}

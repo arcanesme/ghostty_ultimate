@@ -1,0 +1,78 @@
+#!/bin/bash
+# ── Ghostty Ultimate — Ayu Dark Terminal Architecture ──────────────
+# Idempotent setup for macOS machines with Ghostty installed.
+# Unified Ayu Dark theme across all tools. No Catppuccin dependencies.
+# Safe to re-run: backs up configs, skips installed packages, guards git settings.
+set -o pipefail
+start_time=$(date +%s)
+warn_count=0
+
+# ── Ayu Dark palette (single source of truth) ─────────────────────
+#   bg        {{ palette.bg }}    surface    {{ palette.surface }}    selection  {{ palette.selection }}
+#   fg        {{ palette.fg }}    comment    {{ palette.comment }}    gutter     {{ palette.gutter }}
+#   red       {{ palette.red }}    green      {{ palette.green }}    yellow     {{ palette.yellow }}
+#   blue      {{ palette.blue }}    purple     {{ palette.purple }}    cyan       {{ palette.cyan }}
+#   orange    {{ palette.orange }}    br_red     {{ palette.br_red }}    br_green   {{ palette.br_green }}
+#   br_blue   {{ palette.br_blue }}    br_purple  {{ palette.br_purple }}    br_cyan    {{ palette.br_cyan }}
+
+# ── Script colors ─────────────────────────────────────────────────
+c_purple='\033[38;2;205;161;250m'
+c_blue='\033[38;2;83;189;250m'
+c_text='\033[38;2;191;189;182m'
+c_dim='\033[38;2;104;104;104m'
+c_surface='\033[38;2;30;35;43m'
+c_green='\033[38;2;127;217;98m'
+c_yellow='\033[38;2;249;175;79m'
+c_red='\033[38;2;234;108;115m'
+c_bold='\033[1m'
+c_faint='\033[2m'
+c_reset='\033[0m'
+
+print_header() {
+  echo ""
+  echo -e "${c_surface}────────────────────────────────────────────────────────${c_reset}"
+  echo -e "  ${c_purple}${c_bold}$1${c_reset}"
+  echo -e "${c_surface}────────────────────────────────────────────────────────${c_reset}"
+}
+print_step()  { echo -e "  ${c_green}✓${c_reset} ${c_text}$1${c_reset}"; }
+print_warn()  { ((warn_count++)); echo -e "  ${c_yellow}▲${c_reset} ${c_dim}$1${c_reset}"; }
+print_skip()  { echo -e "  ${c_surface}○${c_reset} ${c_dim}$1${c_reset}"; }
+print_error() { echo -e "  ${c_red}✗${c_reset} ${c_text}$1${c_reset}"; }
+
+# ── Prerequisites ─────────────────────────────────────────────────
+[[ "$(uname)" != "Darwin" ]] && { print_error "macOS required"; exit 1; }
+command -v brew &>/dev/null || { print_error "Homebrew required — https://brew.sh"; exit 1; }
+
+if ! command -v ghostty &>/dev/null && [[ ! -d "/Applications/Ghostty.app" ]]; then
+  print_warn "Ghostty not detected — config will be written for when it's installed"
+fi
+
+# ── Variables ─────────────────────────────────────────────────────
+ZSHRC="$HOME/.zshrc"
+SCRIPTS_DIR="$HOME/.local/bin"
+BACKUP_SUFFIX=".bak.$(date +%s)"
+mkdir -p "$SCRIPTS_DIR" || { print_error "Cannot create $SCRIPTS_DIR"; exit 1; }
+
+# ── Helpers ───────────────────────────────────────────────────────
+
+# Fast font detection via filesystem scan (replaces 15+ second system_profiler calls)
+font_installed() {
+  local name="$1"
+  for dir in "$HOME/Library/Fonts" "/Library/Fonts" "/System/Library/Fonts"; do
+    [[ -d "$dir" ]] && find "$dir" -iname "*${name}*" -print -quit 2>/dev/null | grep -q . && return 0
+  done
+  return 1
+}
+
+# Set git config only if not already configured — never overwrites user preferences
+git_default() {
+  git config --global --get "$1" &>/dev/null || git config --global "$1" "$2"
+}
+
+# ── Banner ────────────────────────────────────────────────────────
+clear 2>/dev/null || true
+echo ""
+echo -e "  👻 ${c_purple}${c_bold}ＧＨＯＳＴＴＹ  ${c_blue}ＵＬＴＩＭＡＴＥ${c_reset}"
+echo -e "  ${c_dim}Avant-Garde Terminal Architecture${c_reset}"
+echo -e "  ${c_surface}─────────────────────────────────${c_reset}"
+echo ""

@@ -1,0 +1,33 @@
+########################################################################
+# 10/13 — Git (guarded: never overwrites existing settings)
+########################################################################
+print_header "🔀 10/13 — Git"
+
+git_default core.pager "delta"
+git_default interactive.diffFilter "delta --color-only"
+
+git config --global delta.navigate {{ config.git.delta.navigate | bool_to_str }}
+git config --global delta.dark {{ config.git.delta.dark | bool_to_str }}
+git config --global delta.line-numbers {{ config.git.delta.line_numbers | bool_to_str }}
+git config --global delta.side-by-side {{ config.git.delta.side_by_side | bool_to_str }}
+git config --global delta.syntax-theme "{{ config.git.delta.syntax_theme }}"
+git config --global delta.file-style "{{ config.git.delta.file_style }}"
+git config --global delta.file-decoration-style "{{ config.git.delta.file_decoration_style }}"
+git config --global delta.hunk-header-style "{{ config.git.delta.hunk_header_style }}"
+git config --global delta.hunk-header-decoration-style "{{ config.git.delta.hunk_header_decoration_style }}"
+git config --global delta.minus-style "{{ config.git.delta.minus_style }}"
+git config --global delta.plus-style "{{ config.git.delta.plus_style }}"
+git config --global delta.minus-emph-style "{{ config.git.delta.minus_emph_style }}"
+git config --global delta.plus-emph-style "{{ config.git.delta.plus_emph_style }}"
+git config --global delta.zero-style "{{ config.git.delta.zero_style }}"
+git config --global delta.whitespace-error-style "{{ config.git.delta.whitespace_error_style }}"
+
+{% for setting in config.git.guarded_settings %}
+git_default {{ setting.key }} {{ setting.value }}
+{% endfor %}
+
+{% for alias in config.git.aliases %}
+git_default alias.{{ alias.name }} {{ alias.value }}
+{% endfor %}
+
+print_step "Git enhanced (existing settings preserved)"

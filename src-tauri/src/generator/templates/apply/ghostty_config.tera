@@ -1,0 +1,64 @@
+theme = ayu-dark
+
+# ── Typography ────────────────────────────────────────────────────
+font-family             = {{ config.ghostty.font_family }}
+{% if config.ghostty.font_family_bold %}font-family-bold        = {{ config.ghostty.font_family_bold }}
+{% endif %}{% if config.ghostty.font_family_italic %}font-family-italic      = {{ config.ghostty.font_family_italic }}
+{% endif %}{% if config.ghostty.font_family_bold_italic %}font-family-bold-italic = {{ config.ghostty.font_family_bold_italic }}
+{% endif %}font-size               = {{ config.ghostty.font_size }}
+{% if config.ghostty.font_style %}
+font-style              = {{ config.ghostty.font_style }}
+{% endif %}{% if config.ghostty.font_style_bold %}
+font-style-bold         = {{ config.ghostty.font_style_bold }}
+{% endif %}{% if config.ghostty.font_style_italic %}
+font-style-italic       = {{ config.ghostty.font_style_italic }}
+{% endif %}
+{% for feature in config.ghostty.font_features %}font-feature = {{ feature }}
+{% endfor %}{% for variation in config.ghostty.font_variation %}font-variation = {{ variation }}
+{% endfor %}font-thicken = {{ config.ghostty.font_thicken | bool_to_str }}
+
+# ── Window & Padding ─────────────────────────────────────────────
+window-padding-x        = {{ config.ghostty.window_padding_x }}
+window-padding-y        = {{ config.ghostty.window_padding_y }}
+window-padding-balance  = {{ config.ghostty.window_padding_balance | bool_to_str }}
+
+macos-titlebar-style    = {{ config.ghostty.macos_titlebar_style }}
+macos-titlebar-proxy-icon = {{ config.ghostty.macos_titlebar_proxy_icon }}
+macos-window-shadow     = {{ config.ghostty.macos_window_shadow | bool_to_str }}
+window-colorspace       = {{ config.ghostty.window_colorspace }}
+confirm-close-surface   = {{ config.ghostty.confirm_close_surface }}
+window-decoration       = {{ config.ghostty.window_decoration }}
+mouse-hide-while-typing = {{ config.ghostty.mouse_hide_while_typing | bool_to_str }}
+
+# ── Background & Transparency ────────────────────────────────────
+background-opacity      = {{ config.ghostty.background_opacity }}
+background-blur         = {{ config.ghostty.background_blur }}
+unfocused-split-opacity = {{ config.ghostty.unfocused_split_opacity }}
+{% if config.ghostty.window_opacity is defined and config.ghostty.window_opacity != 1.0 %}window-opacity          = {{ config.ghostty.window_opacity }}
+{% endif %}minimum-contrast        = {{ config.ghostty.minimum_contrast }}
+bold-is-bright          = {{ config.ghostty.bold_is_bright | bool_to_str }}
+
+# ── Cursor ────────────────────────────────────────────────────────
+cursor-style            = {{ config.ghostty.cursor_style }}
+{% if config.ghostty.cursor_style_blink %}cursor-style-blink      = {{ config.ghostty.cursor_style_blink | bool_to_str }}
+{% endif %}cursor-opacity          = {{ config.ghostty.cursor_opacity }}
+cursor-click-to-move    = {{ config.ghostty.cursor_click_to_move | bool_to_str }}
+
+# ── Cell Spacing ──────────────────────────────────────────────────
+adjust-cell-height      = {{ config.ghostty.adjust_cell_height }}
+freetype-load-flags     = {{ config.ghostty.freetype_load_flags }}
+
+# ── Scroll ────────────────────────────────────────────────────────
+scrollback-limit        = {{ config.ghostty.scrollback_limit }}
+{% for kb in config.ghostty.keybinds %}{% if kb.action is containing("scroll") %}keybind = {{ kb.key }}={{ kb.action }}
+{% endif %}{% endfor %}
+shell-integration       = {{ config.ghostty.shell_integration }}
+clipboard-read          = {{ config.ghostty.clipboard_read }}
+clipboard-write         = {{ config.ghostty.clipboard_write }}
+{% if config.ghostty.custom_shader_enabled %}
+custom-shader           = {{ config.ghostty.custom_shader_path }}
+{% endif %}macos-option-as-alt     = {{ config.ghostty.macos_option_as_alt | bool_to_str }}
+
+# ── Keybinds ──────────────────────────────────────────────────────
+{% for kb in config.ghostty.keybinds %}{% if kb.action is not containing("scroll") %}keybind = {{ kb.key }}={{ kb.action }}
+{% endif %}{% endfor %}

@@ -1,0 +1,94 @@
+# ══ GHOSTTY ULTIMATE ══════════════════════════════════════════
+export PATH="$HOME/.local/bin:$PATH"
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+eval "$(atuin init zsh)"
+
+# fzf init
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh 2>/dev/null) || true
+elif [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
+fi
+
+export FZF_DEFAULT_OPTS=" \
+  --color=bg+:{{ palette.selection }},bg:{{ palette.bg }},spinner:{{ palette.purple }},hl:{{ palette.red }} \
+  --color=fg:{{ palette.fg }},header:{{ palette.red }},info:{{ palette.purple }},pointer:{{ palette.blue }} \
+  --color=marker:{{ palette.green }},fg+:{{ palette.fg }},prompt:{{ palette.blue }},hl+:{{ palette.br_red }} \
+  --color=selected-bg:{{ palette.selection }} \
+  --border={{ config.themes.fzf.border }} --prompt='{{ config.themes.fzf.prompt }}' --marker='{{ config.themes.fzf.marker }}' --pointer='{{ config.themes.fzf.pointer }}' \
+  --separator='{{ config.themes.fzf.separator }}' --scrollbar='{{ config.themes.fzf.scrollbar }}' --layout={{ config.themes.fzf.layout }} --height={{ config.themes.fzf.height }}"
+
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh-completions:${FPATH}"
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+autoload -Uz compinit && compinit -C
+
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' menu no
+
+[ -f "$HOME/.local/share/fzf-tab/fzf-tab.plugin.zsh" ] && source "$HOME/.local/share/fzf-tab/fzf-tab.plugin.zsh" >/dev/null 2>&1
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons $realpath'
+zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1 --color=always --icons $realpath'
+zstyle ':fzf-tab:complete:(cat|bat|vim|nvim):*' fzf-preview '[[ -f $realpath ]] && bat -n --color=always --line-range :200 $realpath || eza -1 --color=always --icons $realpath'
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff $word | delta'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --color=always $word'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'case "$group" in "modified file") git diff $word | delta ;; *) git log --color=always $word ;; esac'
+zstyle ':fzf-tab:complete:(kill|ps):*' fzf-preview '[[ $group == "[process ID]" ]] && ps -p $word -o pid,user,%cpu,%mem,command'
+zstyle ':fzf-tab:complete:(export|unset):*' fzf-preview 'echo ${(P)word}'
+zstyle ':fzf-tab:*' continuous-trigger '/'
+zstyle ':fzf-tab:*' switch-group '<' '>'
+[ -n "$TMUX" ] && zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+
+[ -f "$HOME/.local/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "$HOME/.local/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >/dev/null 2>&1
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='{{ config.zshrc.autosuggest_style }}'
+ZSH_AUTOSUGGEST_STRATEGY=({% for s in config.zshrc.autosuggest_strategy %}{{ s }} {% endfor %})
+
+# zsh-vi-mode: block=NORMAL | beam=INSERT | underline=REPLACE
+{% if config.zshrc.vi_mode_enabled %}
+if [ -f "$HOME/.local/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh" ]; then
+  ZVM_VI_INSERT_ESCAPE_BINDKEY={{ config.zshrc.vi_mode_escape_key }}
+  ZVM_CURSOR_STYLE_ENABLED=true
+  ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+  source "$HOME/.local/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+  zvm_after_init_commands=("source <(fzf --zsh 2>/dev/null) || true")
+fi
+{% endif %}
+
+[ -f "$HOME/.local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$HOME/.local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >/dev/null 2>&1
+
+HISTSIZE={{ config.zshrc.histsize }}; SAVEHIST={{ config.zshrc.savehist }}; HISTFILE="$HOME/.zsh_history"
+setopt APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_SPACE HIST_IGNORE_ALL_DUPS HIST_SAVE_NO_DUPS HIST_FIND_NO_DUPS HIST_REDUCE_BLANKS INC_APPEND_HISTORY
+
+bindkey '^[[A' history-search-backward; bindkey '^[[B' history-search-forward
+bindkey '\ef' forward-word; bindkey '\eb' backward-word
+bindkey '^A' beginning-of-line; bindkey '^E' end-of-line
+bindkey '^K' kill-line; bindkey '^U' backward-kill-line
+bindkey '^X^E' edit-command-line; autoload -z edit-command-line; zle -N edit-command-line
+
+export EDITOR={{ config.zshrc.editor }}
+export VISUAL={{ config.zshrc.editor }}
+export BAT_THEME="{{ config.zshrc.bat_theme }}"
+{% if config.zshrc.manpager_enabled %}export MANPAGER="sh -c 'col -bx | bat -l man -p'"{% endif %}
+
+# ── Aliases ──────────────────────────────────────────────────
+{% for alias in config.zshrc.aliases %}{% if alias.enabled %}alias {{ alias.name }}='{{ alias.command | shell_escape }}'
+{% endif %}{% endfor %}
+
+# rm → trash only in interactive shells
+[[ $- == *i* ]] && alias rm='trash'
+
+# ── Functions ────────────────────────────────────────────────
+{% for func in config.zshrc.functions %}{% if func.enabled %}function {{ func.name }}() { {{ func.body }} }
+{% endif %}{% endfor %}
+
+{% if config.zshrc.show_fastfetch_on_start %}if [[ $- == *i* ]] && [[ -z "$TMUX" ]]; then command fastfetch 2>/dev/null; fi{% endif %}
+{% if config.zshrc.show_tmux_cheat_on_start %}if [[ $- == *i* ]] && [[ -n "$TMUX" ]] && [[ "${TMUX_CHEAT:-1}" == "1" ]]; then
+  if [[ -z "$TMUX_CHEAT_SHOWN" ]]; then export TMUX_CHEAT_SHOWN=1; command tmux-cheat 2>/dev/null; fi
+fi{% endif %}
+# ══ END GHOSTTY ULTIMATE ═════════════════════════════════════

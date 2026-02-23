@@ -1,0 +1,89 @@
+set -g default-terminal "{{ config.tmux.default_terminal }}"
+set -ag terminal-overrides ",xterm-256color:RGB"
+set -g mouse {{ config.tmux.mouse | bool_to_on_off }}
+set -g history-limit {{ config.tmux.history_limit }}
+set -g base-index {{ config.tmux.base_index }}
+setw -g pane-base-index {{ config.tmux.pane_base_index }}
+set -g renumber-windows {{ config.tmux.renumber_windows | bool_to_on_off }}
+set -g set-clipboard {{ config.tmux.set_clipboard | bool_to_on_off }}
+set -sg escape-time {{ config.tmux.escape_time }}
+set -g focus-events {{ config.tmux.focus_events | bool_to_on_off }}
+set -g status-position {{ config.tmux.status_position }}
+
+# ── Ayu Dark — status bar ─────────────────────────────────────────
+set -g status-style "bg={{ palette.bg }},fg={{ palette.fg }}"
+set -g status-left-length {{ config.tmux.status_left_length }}
+set -g status-right-length {{ config.tmux.status_right_length }}
+
+set -g status-left "#[bg={{ palette.blue }},fg={{ palette.bg }},bold]  #S #[bg={{ palette.bg }},fg={{ palette.blue }}]"
+set -g status-right "#[fg={{ palette.comment }}]#{b:pane_current_path}  #[fg={{ palette.blue }},bold]%H:%M "
+
+set -g window-status-format         "#[fg={{ palette.comment }}]  ○ #I #W "
+set -g window-status-current-format "#[fg={{ palette.blue }},bold]  ● #I #W #[fg={{ palette.yellow }}]"
+set -g window-status-separator      ""
+
+# ── Ayu Dark — pane borders ───────────────────────────────────────
+set -g pane-border-style        "fg={{ palette.surface }}"
+set -g pane-active-border-style "fg={{ palette.blue }},bold"
+set -g pane-border-lines         {{ config.tmux.pane_border_lines }}
+set -g pane-border-indicators    {{ config.tmux.pane_border_indicators }}
+
+# ── Ayu Dark — messages & menus ───────────────────────────────────
+set -g message-style         "bg={{ palette.selection }},fg={{ palette.fg }}"
+set -g message-command-style "bg={{ palette.selection }},fg={{ palette.fg }}"
+set -g mode-style            "bg={{ palette.selection }},fg={{ palette.fg }}"
+set -g popup-border-style    "fg={{ palette.blue }}"
+set -g clock-mode-colour     "{{ palette.blue }}"
+
+unbind C-b
+set -g prefix {{ config.tmux.prefix_key }}
+bind {{ config.tmux.prefix_key }} send-prefix
+
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+setw -g mode-keys {{ config.tmux.mode_keys }}
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi C-v send -X rectangle-toggle
+bind -T copy-mode-vi y send -X copy-selection-and-cancel
+
+bind r source-file ~/.tmux.conf \; display-message "✓ Config reloaded"
+
+{% for plugin in config.tmux.plugins %}{% if plugin.enabled %}set -g @plugin '{{ plugin.repo }}'
+{% endif %}{% endfor %}
+
+set -g @floax-width '{{ config.tmux.floax_width }}'
+set -g @floax-height '{{ config.tmux.floax_height }}'
+set -g @floax-border-color '{{ config.tmux.floax_border_color }}'
+set -g @floax-text-color '{{ config.tmux.floax_text_color }}'
+set -g @floax-bind '{{ config.tmux.floax_bind }}'
+set -g @floax-change-path '{{ config.tmux.floax_change_path | bool_to_str }}'
+
+set -g @sessionx-bind '{{ config.tmux.sessionx_bind }}'
+set -g @sessionx-window-height '{{ config.tmux.sessionx_window_height }}'
+set -g @sessionx-window-width '{{ config.tmux.sessionx_window_width }}'
+set -g @sessionx-zoxide-mode '{{ config.tmux.sessionx_zoxide_mode | bool_to_on_off }}'
+set -g @sessionx-filter-current '{{ config.tmux.sessionx_filter_current | bool_to_str }}'
+
+set -g @continuum-restore '{{ config.tmux.continuum_restore | bool_to_on_off }}'
+set -g @resurrect-strategy-nvim '{{ config.tmux.resurrect_strategy_nvim }}'
+set -g @resurrect-capture-pane-contents '{{ config.tmux.resurrect_capture_pane_contents | bool_to_on_off }}'
+
+bind A run-shell "tmux-ai #{pane_current_path}"
+bind P run-shell "tmux-pair #{pane_current_path}"
+bind R run-shell "tmux-review #{pane_current_path}"
+
+{% for popup in config.tmux.popup_bindings %}bind {{ popup.key }} display-popup -E -w {{ popup.width }} -h {{ popup.height }} "{{ popup.command }}"
+{% endfor %}run '~/.tmux/plugins/tpm/tpm'

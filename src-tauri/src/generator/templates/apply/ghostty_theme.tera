@@ -1,0 +1,22 @@
+palette = 0={{ palette.surface }}
+palette = 1={{ palette.red }}
+palette = 2={{ palette.green }}
+palette = 3={{ palette.yellow }}
+palette = 4={{ palette.blue }}
+palette = 5={{ palette.purple }}
+palette = 6={{ palette.cyan }}
+palette = 7=#c7c7c7
+palette = 8={{ palette.comment }}
+palette = 9={{ palette.br_red }}
+palette = 10={{ palette.br_green }}
+palette = 11={{ palette.orange }}
+palette = 12={{ palette.br_blue }}
+palette = 13={{ palette.br_purple }}
+palette = 14={{ palette.br_cyan }}
+palette = 15=#ffffff
+background = {{ palette.bg }}
+foreground = {{ palette.fg }}
+cursor-color = {{ palette.fg }}
+cursor-text = {{ palette.bg }}
+selection-background = {{ palette.selection }}
+selection-foreground = {{ palette.fg }}

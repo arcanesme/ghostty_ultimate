@@ -1,0 +1,48 @@
+########################################################################
+# 9/13 — Tool Configs (Atuin + Lazygit)
+########################################################################
+print_header "⚙️  9/13 — Tool Configs"
+mkdir -p "$HOME/.config/atuin"
+cat > "$HOME/.config/atuin/config.toml" << 'AT'
+style = "{{ config.tool_configs.atuin.style }}"
+inline_height = {{ config.tool_configs.atuin.inline_height }}
+show_preview = {{ config.tool_configs.atuin.show_preview | bool_to_str }}
+filter_mode = "{{ config.tool_configs.atuin.filter_mode }}"
+filter_mode_shell_up_key_binding = "{{ config.tool_configs.atuin.filter_mode_shell_up_key_binding }}"
+search_mode = "{{ config.tool_configs.atuin.search_mode }}"
+show_tabs = {{ config.tool_configs.atuin.show_tabs | bool_to_str }}
+timestamps_enabled = {{ config.tool_configs.atuin.timestamps_enabled | bool_to_str }}
+time_format = "{{ config.tool_configs.atuin.time_format }}"
+exit_mode = "{{ config.tool_configs.atuin.exit_mode }}"
+sync_records = {{ config.tool_configs.atuin.sync_records | bool_to_str }}
+AT
+print_step "Atuin"
+atuin import auto 2>/dev/null || true
+
+mkdir -p "$HOME/.config/lazygit"
+cat > "$HOME/.config/lazygit/config.yml" << 'LG'
+gui:
+  nerdFontsVersion: "{{ config.tool_configs.lazygit.nerd_fonts_version }}"
+  showFileIcons: {{ config.tool_configs.lazygit.show_file_icons | bool_to_str }}
+  border: {{ config.tool_configs.lazygit.border }}
+  mouseEvents: {{ config.tool_configs.lazygit.mouse_events | bool_to_str }}
+  showCommandLog: {{ config.tool_configs.lazygit.show_command_log | bool_to_str }}
+  theme:
+    activeBorderColor:        ['{{ palette.blue }}', bold]
+    inactiveBorderColor:      ['{{ palette.comment }}']
+    optionsTextColor:         ['{{ palette.purple }}']
+    selectedLineBgColor:      ['{{ palette.selection }}']
+    selectedRangeBgColor:     ['{{ palette.selection }}']
+    cherryPickedCommitBgColor:['{{ palette.surface }}']
+    cherryPickedCommitFgColor:['{{ palette.purple }}']
+    unstagedChangesColor:     ['{{ palette.red }}']
+    defaultFgColor:           ['{{ palette.fg }}']
+    searchingActiveBorderColor:['{{ palette.yellow }}']
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+os:
+  editPreset: {{ config.tool_configs.lazygit.edit_preset }}
+LG
+print_step "Lazygit — Ayu Dark"

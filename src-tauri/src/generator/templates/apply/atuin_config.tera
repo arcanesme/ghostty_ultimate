@@ -1,0 +1,11 @@
+style = "{{ config.tool_configs.atuin.style }}"
+inline_height = {{ config.tool_configs.atuin.inline_height }}
+show_preview = {{ config.tool_configs.atuin.show_preview | bool_to_str }}
+filter_mode = "{{ config.tool_configs.atuin.filter_mode }}"
+filter_mode_shell_up_key_binding = "{{ config.tool_configs.atuin.filter_mode_shell_up_key_binding }}"
+search_mode = "{{ config.tool_configs.atuin.search_mode }}"
+show_tabs = {{ config.tool_configs.atuin.show_tabs | bool_to_str }}
+timestamps_enabled = {{ config.tool_configs.atuin.timestamps_enabled | bool_to_str }}
+time_format = "{{ config.tool_configs.atuin.time_format }}"
+exit_mode = "{{ config.tool_configs.atuin.exit_mode }}"
+sync_records = {{ config.tool_configs.atuin.sync_records | bool_to_str }}

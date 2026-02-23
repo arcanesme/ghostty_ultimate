@@ -1,0 +1,26 @@
+########################################################################
+# 5/13 — Fastfetch
+########################################################################
+print_header "5/13 — Fastfetch"
+FF_DIR="$HOME/.config/fastfetch"
+mkdir -p "$FF_DIR"
+
+cat > "$FF_DIR/quotes.txt" << 'QT'
+{% for quote in config.fastfetch.quotes %}{{ quote }}
+{% endfor %}QT
+
+cat > "$FF_DIR/config.jsonc" << 'FF'
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": { "type": "{{ config.fastfetch.logo_type }}", "color": { "1": "{{ config.fastfetch.logo_color_1 }}", "2": "{{ config.fastfetch.logo_color_2 }}" },
+            "padding": { "top": 1, "left": 2, "right": 3 } },
+  "display": { "separator": "{{ config.fastfetch.separator }}", "color": { "keys": "{{ config.fastfetch.logo_color_1 }}", "title": "{{ config.fastfetch.logo_color_1 }}" },
+               "key": { "width": {{ config.fastfetch.key_width }} } },
+  "modules": [
+{% for mod in config.fastfetch.modules %}{% if mod.enabled %}{% if mod.module_type == "break" %}    "break"{% elif mod.module_type == "colors" %}    { "type": "colors",    "symbol": "circle" }{% elif mod.module_type == "title" %}    { "type": "title",     "format": "{{ mod.format }}" }{% elif mod.module_type == "separator" %}    { "type": "separator", "string": "{{ mod.string }}" }{% elif mod.module_type == "command" %}    { "type": "command",   "key": "{{ mod.key }}", "text": "{{ mod.text }}" }{% elif mod.module_type == "custom" %}    { "type": "custom",    "format": "{{ mod.format }}" }{% elif mod.module_type == "cpu" %}    { "type": "cpu",       "key": "{{ mod.key }}", "showPeCoreCount": false }{% elif mod.module_type == "disk" %}    { "type": "disk",      "key": "{{ mod.key }}", "folders": "/" }{% elif mod.module_type == "localip" %}    { "type": "localip",   "key": "{{ mod.key }}",   "showIpv4": true, "showIpv6": false, "showMac": false }{% else %}    { "type": "{{ mod.module_type }}",{% if mod.key %}    "key": "{{ mod.key }}"{% endif %} }{% endif %}{% if not loop.last %},
+{% endif %}{% endif %}{% endfor %}
+
+  ]
+}
+FF
+print_step "Fastfetch — stoic quotes + refined layout"

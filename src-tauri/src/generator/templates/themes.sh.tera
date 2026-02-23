@@ -1,0 +1,431 @@
+########################################################################
+# 11/13 — Ayu Dark Themes (bat, btop, yazi)
+########################################################################
+print_header "🎨 11/13 — Ayu Dark Themes"
+
+# ── bat: custom Ayu Dark TextMate theme ───────────────────────────
+BAT_THEMES="$(bat --config-dir 2>/dev/null)/themes"
+if [[ -n "$BAT_THEMES" ]]; then
+  mkdir -p "$BAT_THEMES"
+  # Remove old Catppuccin theme if present
+  rm -f "$BAT_THEMES/Catppuccin Mocha.tmTheme" 2>/dev/null || true
+  cat > "$BAT_THEMES/Ayu Dark.tmTheme" << 'BATTHEME'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Ayu Dark</string>
+  <key>settings</key>
+  <array>
+    <!-- Global settings -->
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key><string>{{ palette.bg | upper }}</string>
+        <key>foreground</key><string>{{ palette.fg | upper }}</string>
+        <key>caret</key><string>{{ palette.fg | upper }}</string>
+        <key>selection</key><string>{{ palette.selection | upper }}</string>
+        <key>lineHighlight</key><string>{{ palette.line_highlight | upper }}</string>
+        <key>gutterForeground</key><string>{{ palette.gutter | upper }}</string>
+        <key>gutterBackground</key><string>{{ palette.bg | upper }}</string>
+        <key>guide</key><string>{{ palette.surface | upper }}</string>
+        <key>activeGuide</key><string>{{ palette.blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Comments -->
+    <dict>
+      <key>name</key><string>Comment</string>
+      <key>scope</key><string>comment, punctuation.definition.comment</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.comment | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Strings -->
+    <dict>
+      <key>name</key><string>String</string>
+      <key>scope</key><string>string, string.quoted</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Numbers -->
+    <dict>
+      <key>name</key><string>Number</string>
+      <key>scope</key><string>constant.numeric</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Constants -->
+    <dict>
+      <key>name</key><string>Constant</string>
+      <key>scope</key><string>constant, constant.language, constant.character</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Keywords -->
+    <dict>
+      <key>name</key><string>Keyword</string>
+      <key>scope</key><string>keyword, keyword.control, keyword.operator.logical, keyword.operator.new, storage.type, storage.modifier</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.keyword | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Operators -->
+    <dict>
+      <key>name</key><string>Operator</string>
+      <key>scope</key><string>keyword.operator, keyword.operator.assignment</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.operator | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Functions -->
+    <dict>
+      <key>name</key><string>Function</string>
+      <key>scope</key><string>entity.name.function, meta.function-call, support.function</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Classes / Types -->
+    <dict>
+      <key>name</key><string>Class / Type</string>
+      <key>scope</key><string>entity.name.type, entity.name.class, support.type, support.class, entity.other.inherited-class</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Variables -->
+    <dict>
+      <key>name</key><string>Variable</string>
+      <key>scope</key><string>variable, variable.other, variable.parameter</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.fg | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Variable special (this, self) -->
+    <dict>
+      <key>name</key><string>Variable Special</string>
+      <key>scope</key><string>variable.language</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Tags (HTML/XML) -->
+    <dict>
+      <key>name</key><string>Tag</string>
+      <key>scope</key><string>entity.name.tag</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Tag attributes -->
+    <dict>
+      <key>name</key><string>Tag Attribute</string>
+      <key>scope</key><string>entity.other.attribute-name</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Punctuation -->
+    <dict>
+      <key>name</key><string>Punctuation</string>
+      <key>scope</key><string>punctuation, punctuation.definition.tag, punctuation.separator, punctuation.section</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.fg | upper }}80</string>
+      </dict>
+    </dict>
+    <!-- Markup heading -->
+    <dict>
+      <key>name</key><string>Markup Heading</string>
+      <key>scope</key><string>markup.heading, markup.heading entity.name</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+    <!-- Markup bold -->
+    <dict>
+      <key>name</key><string>Markup Bold</string>
+      <key>scope</key><string>markup.bold</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+    <!-- Markup italic -->
+    <dict>
+      <key>name</key><string>Markup Italic</string>
+      <key>scope</key><string>markup.italic</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Markup link -->
+    <dict>
+      <key>name</key><string>Markup Link</string>
+      <key>scope</key><string>markup.underline.link, string.other.link</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Markup inline code -->
+    <dict>
+      <key>name</key><string>Markup Code</string>
+      <key>scope</key><string>markup.inline.raw, markup.raw.block</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff inserted -->
+    <dict>
+      <key>name</key><string>Diff Inserted</string>
+      <key>scope</key><string>markup.inserted, meta.diff.header.to-file</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff deleted -->
+    <dict>
+      <key>name</key><string>Diff Deleted</string>
+      <key>scope</key><string>markup.deleted, meta.diff.header.from-file</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff changed -->
+    <dict>
+      <key>name</key><string>Diff Changed</string>
+      <key>scope</key><string>markup.changed</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.yellow | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Regular expressions -->
+    <dict>
+      <key>name</key><string>Regex</string>
+      <key>scope</key><string>string.regexp</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_cyan | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Escape characters -->
+    <dict>
+      <key>name</key><string>Escape</string>
+      <key>scope</key><string>constant.character.escape</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_cyan | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Invalid -->
+    <dict>
+      <key>name</key><string>Invalid</string>
+      <key>scope</key><string>invalid, invalid.illegal</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Embedded / Template -->
+    <dict>
+      <key>name</key><string>Embedded</string>
+      <key>scope</key><string>punctuation.section.embedded, variable.interpolation</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- JSON keys -->
+    <dict>
+      <key>name</key><string>JSON Key</string>
+      <key>scope</key><string>support.type.property-name.json, meta.structure.dictionary.key string</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- YAML keys -->
+    <dict>
+      <key>name</key><string>YAML Key</string>
+      <key>scope</key><string>entity.name.tag.yaml</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- CSS properties -->
+    <dict>
+      <key>name</key><string>CSS Property</string>
+      <key>scope</key><string>support.type.property-name.css</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- CSS values -->
+    <dict>
+      <key>name</key><string>CSS Value</string>
+      <key>scope</key><string>support.constant.property-value.css, constant.other.color.rgb-value.hex.css</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Shell variables -->
+    <dict>
+      <key>name</key><string>Shell Variable</string>
+      <key>scope</key><string>variable.other.normal.shell, variable.other.positional.shell, variable.other.bracket.shell</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>
+BATTHEME
+  bat cache --build 2>/dev/null || true
+  print_step "bat — Ayu Dark (.tmTheme)"
+fi
+
+# ── btop: use built-in ayu theme ─────────────────────────────────
+mkdir -p "$HOME/.config/btop"
+# Remove old Catppuccin theme if present
+rm -f "$HOME/.config/btop/themes/catppuccin_mocha.theme" 2>/dev/null || true
+cat > "$HOME/.config/btop/btop.conf" << 'BTOP'
+color_theme = "{{ config.themes.btop.color_theme }}"
+theme_background = {{ config.themes.btop.theme_background | bool_to_str }}
+truecolor = {{ config.themes.btop.truecolor | bool_to_str }}
+shown_boxes = "{{ config.themes.btop.shown_boxes }}"
+update_ms = {{ config.themes.btop.update_ms }}
+proc_sorting = "{{ config.themes.btop.proc_sorting }}"
+proc_tree = {{ config.themes.btop.proc_tree | bool_to_str }}
+BTOP
+print_step "btop — Ayu (built-in)"
+
+# ── yazi: custom Ayu Dark theme ───────────────────────────────────
+mkdir -p "$HOME/.config/yazi"
+# Remove old Catppuccin theme
+rm -f "$HOME/.config/yazi/theme.toml" 2>/dev/null || true
+cat > "$HOME/.config/yazi/theme.toml" << 'YAZITHEME'
+# Ayu Dark theme for Yazi
+
+[manager]
+cwd = { fg = "{{ palette.blue }}" }
+
+hovered         = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+preview_hovered = { bg = "{{ palette.line_highlight }}" }
+
+find_keyword  = { fg = "{{ palette.yellow }}", bold = true }
+find_position = { fg = "{{ palette.purple }}", bg = "reset" }
+
+marker_copied   = { fg = "{{ palette.green }}", bg = "{{ palette.green }}" }
+marker_cut      = { fg = "{{ palette.red }}", bg = "{{ palette.red }}" }
+marker_marked   = { fg = "{{ palette.blue }}", bg = "{{ palette.blue }}" }
+marker_selected = { fg = "{{ palette.purple }}", bg = "{{ palette.purple }}" }
+
+tab_active   = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}", bold = true }
+tab_inactive = { bg = "{{ palette.bg }}", fg = "{{ palette.comment }}" }
+tab_width    = 1
+
+count_copied   = { fg = "{{ palette.bg }}", bg = "{{ palette.green }}" }
+count_cut      = { fg = "{{ palette.bg }}", bg = "{{ palette.red }}" }
+count_selected = { fg = "{{ palette.bg }}", bg = "{{ palette.purple }}" }
+
+border_symbol = "│"
+border_style  = { fg = "{{ palette.surface }}" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "{{ palette.surface }}" }
+
+mode_normal = { bg = "{{ palette.blue }}", fg = "{{ palette.bg }}", bold = true }
+mode_select = { bg = "{{ palette.purple }}", fg = "{{ palette.bg }}", bold = true }
+mode_unset  = { bg = "{{ palette.red }}", fg = "{{ palette.bg }}", bold = true }
+
+progress_label  = { fg = "{{ palette.fg }}", bold = true }
+progress_normal = { fg = "{{ palette.blue }}", bg = "{{ palette.surface }}" }
+progress_error  = { fg = "{{ palette.red }}", bg = "{{ palette.surface }}" }
+
+permissions_t = { fg = "{{ palette.blue }}" }
+permissions_r = { fg = "{{ palette.yellow }}" }
+permissions_w = { fg = "{{ palette.red }}" }
+permissions_x = { fg = "{{ palette.green }}" }
+permissions_s = { fg = "{{ palette.comment }}" }
+
+[input]
+border   = { fg = "{{ palette.blue }}" }
+title    = { fg = "{{ palette.blue }}" }
+value    = { fg = "{{ palette.fg }}" }
+selected = { bg = "{{ palette.selection }}" }
+
+[pick]
+border   = { fg = "{{ palette.blue }}" }
+active   = { fg = "{{ palette.purple }}", bold = true }
+inactive = { fg = "{{ palette.fg }}" }
+
+[confirm]
+border   = { fg = "{{ palette.blue }}" }
+title    = { fg = "{{ palette.blue }}" }
+content  = { fg = "{{ palette.fg }}" }
+list     = { fg = "{{ palette.fg }}" }
+btn_yes  = { bg = "{{ palette.selection }}", fg = "{{ palette.green }}" }
+btn_no   = { bg = "{{ palette.selection }}", fg = "{{ palette.red }}" }
+btn_label = { fg = "{{ palette.fg }}", bold = true }
+
+[completion]
+border   = { fg = "{{ palette.blue }}" }
+active   = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+inactive = { fg = "{{ palette.comment }}" }
+
+[tasks]
+border  = { fg = "{{ palette.blue }}" }
+title   = { fg = "{{ palette.blue }}" }
+hovered = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+
+[which]
+cols = 3
+mask            = { bg = "{{ palette.bg }}" }
+cand            = { fg = "{{ palette.cyan }}" }
+rest            = { fg = "{{ palette.comment }}" }
+desc            = { fg = "{{ palette.purple }}" }
+separator       = "  "
+separator_style = { fg = "{{ palette.surface }}" }
+
+[help]
+on      = { fg = "{{ palette.blue }}" }
+run     = { fg = "{{ palette.purple }}" }
+desc    = { fg = "{{ palette.comment }}" }
+hovered = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}", bold = true }
+footer  = { fg = "{{ palette.comment }}", bg = "{{ palette.bg }}" }
+
+[notify]
+title_info  = { fg = "{{ palette.blue }}" }
+title_warn  = { fg = "{{ palette.yellow }}" }
+title_error = { fg = "{{ palette.red }}" }
+
+[filetype]
+rules = [
+  # Media
+  { mime = "image/*", fg = "{{ palette.purple }}" },
+  { mime = "video/*", fg = "{{ palette.yellow }}" },
+  { mime = "audio/*", fg = "{{ palette.yellow }}" },
+
+  # Archives
+  { mime = "application/zip",    fg = "{{ palette.red }}" },
+  { mime = "application/gzip",   fg = "{{ palette.red }}" },
+  { mime = "application/x-tar",  fg = "{{ palette.red }}" },
+  { mime = "application/x-7z*",  fg = "{{ palette.red }}" },
+  { mime = "application/x-rar",  fg = "{{ palette.red }}" },
+  { mime = "application/x-bzip*",fg = "{{ palette.red }}" },
+
+  # Documents
+  { mime = "application/pdf",    fg = "{{ palette.red }}" },
+  { mime = "application/json",   fg = "{{ palette.yellow }}" },
+  { mime = "application/xml",    fg = "{{ palette.yellow }}" },
+
+  # Code / text
+  { mime = "text/*", fg = "{{ palette.fg }}" },
+
+  # Fallback
+  { name = "*", fg = "{{ palette.fg }}" },
+  { name = "*/", fg = "{{ palette.blue }}", bold = true },
+]
+YAZITHEME
+print_step "yazi — Ayu Dark (custom)"

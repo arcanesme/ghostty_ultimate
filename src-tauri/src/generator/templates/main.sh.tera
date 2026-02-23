@@ -1,0 +1,15 @@
+{% include "header.sh.tera" %}
+{% if config.clean_artifacts.enabled %}{% include "clean_artifacts.sh.tera" %}{% endif %}
+{% if config.packages.enabled %}{% include "packages.sh.tera" %}{% endif %}
+{% if config.ghostty.enabled %}{% include "ghostty.sh.tera" %}{% endif %}
+{% if config.starship.enabled %}{% include "starship.sh.tera" %}{% endif %}
+{% if config.fastfetch.enabled %}{% include "fastfetch.sh.tera" %}{% endif %}
+{% if config.zsh_plugins.enabled %}{% include "zsh_plugins.sh.tera" %}{% endif %}
+{% if config.tmux.enabled %}{% include "tmux.sh.tera" %}{% endif %}
+{% if config.neovim.enabled %}{% include "neovim.sh.tera" %}{% endif %}
+{% if config.tool_configs.enabled %}{% include "tool_configs.sh.tera" %}{% endif %}
+{% if config.git.enabled %}{% include "git.sh.tera" %}{% endif %}
+{% if config.themes.enabled %}{% include "themes.sh.tera" %}{% endif %}
+{% if config.tmux_scripts.enabled %}{% include "tmux_scripts.sh.tera" %}{% endif %}
+{% if config.zshrc.enabled %}{% include "zshrc.sh.tera" %}{% endif %}
+{% include "done.sh.tera" %}

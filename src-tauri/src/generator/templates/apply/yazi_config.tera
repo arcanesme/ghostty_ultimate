@@ -1,0 +1,12 @@
+[manager]
+ratio          = [{{ config.zsh_plugins.yazi.ratio.0 }}, {{ config.zsh_plugins.yazi.ratio.1 }}, {{ config.zsh_plugins.yazi.ratio.2 }}]
+sort_by        = "{{ config.zsh_plugins.yazi.sort_by }}"
+sort_sensitive = {{ config.zsh_plugins.yazi.sort_sensitive | bool_to_str }}
+sort_reverse   = {{ config.zsh_plugins.yazi.sort_reverse | bool_to_str }}
+show_hidden    = {{ config.zsh_plugins.yazi.show_hidden | bool_to_str }}
+show_symlink   = {{ config.zsh_plugins.yazi.show_symlink | bool_to_str }}
+
+[preview]
+tab_size   = {{ config.zsh_plugins.yazi.preview_tab_size }}
+max_width  = {{ config.zsh_plugins.yazi.preview_max_width }}
+max_height = {{ config.zsh_plugins.yazi.preview_max_height }}

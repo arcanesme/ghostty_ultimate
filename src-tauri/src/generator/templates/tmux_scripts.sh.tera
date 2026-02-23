@@ -1,0 +1,92 @@
+########################################################################
+# 12/13 — tmux Layout Scripts + Cheat Sheet
+########################################################################
+print_header "📜 12/13 — tmux Layout Scripts"
+
+cat > "$SCRIPTS_DIR/tmux-ai" << 'S1'
+#!/bin/bash
+S="ai"; D="${1:-$(pwd)}"
+tmux has-session -t "$S" 2>/dev/null && { tmux attach -t "$S"; exit 0; }
+tmux new-session -d -s "$S" -n "claude" -c "$D"
+{% for window in config.tmux_scripts.ai.windows %}
+tmux new-window -t "$S" -n "{{ window.name }}" -c "$D"
+{% if window.command %}tmux send-keys -t "$S:{{ window.name }}" "{{ window.command }}" Enter
+{% endif %}
+{% endfor %}
+{% if config.tmux_scripts.ai.shell_split %}
+tmux new-window -t "$S" -n "shell" -c "$D"
+tmux split-window -t "$S:shell" -h -p 40 -c "$D"
+tmux send-keys -t "$S:shell.2" "git status -sb 2>/dev/null" Enter
+{% endif %}
+tmux select-window -t "$S:claude"
+tmux attach -t "$S"
+S1
+chmod +x "$SCRIPTS_DIR/tmux-ai"
+print_step "tmux-ai"
+
+cat > "$SCRIPTS_DIR/tmux-pair" << 'S2'
+#!/bin/bash
+S="pair"; D="${1:-$(pwd)}"
+tmux has-session -t "$S" 2>/dev/null && { tmux attach -t "$S"; exit 0; }
+tmux new-session -d -s "$S" -n "agents" -c "$D"
+tmux split-window -t "$S:agents" -h -p 50 -c "$D"
+tmux split-window -t "$S:agents.1" -v -p 30 -c "$D"
+tmux select-pane -t "$S:agents.1"
+tmux attach -t "$S"
+S2
+chmod +x "$SCRIPTS_DIR/tmux-pair"
+print_step "tmux-pair"
+
+cat > "$SCRIPTS_DIR/tmux-review" << 'S3'
+#!/bin/bash
+S="review"; D="${1:-$(pwd)}"
+tmux has-session -t "$S" 2>/dev/null && { tmux attach -t "$S"; exit 0; }
+tmux new-session -d -s "$S" -n "review" -c "$D"
+tmux split-window -t "$S:review" -h -p 50 -c "$D"
+tmux send-keys -t "$S:review.2" "git diff --stat 2>/dev/null && git log --oneline -10 2>/dev/null" Enter
+tmux select-pane -t "$S:review.1"
+tmux attach -t "$S"
+S3
+chmod +x "$SCRIPTS_DIR/tmux-review"
+print_step "tmux-review"
+
+cat > "$SCRIPTS_DIR/tmux-dev" << 'S4'
+#!/bin/bash
+S="dev"; D="${1:-$(pwd)}"
+tmux has-session -t "$S" 2>/dev/null && { tmux attach -t "$S"; exit 0; }
+tmux new-session -d -s "$S" -n "edit" -c "$D"
+tmux send-keys -t "$S:edit" "nvim ." Enter
+tmux new-window -t "$S" -n "term" -c "$D"
+tmux split-window -t "$S:term" -h -p 50 -c "$D"
+tmux new-window -t "$S" -n "server" -c "$D"
+tmux select-window -t "$S:edit"
+tmux attach -t "$S"
+S4
+chmod +x "$SCRIPTS_DIR/tmux-dev"
+print_step "tmux-dev"
+
+cat > "$SCRIPTS_DIR/tmux-cheat" << 'S5'
+#!/bin/bash
+P='\033[0;35m'; C='\033[0;36m'; B='\033[1m'; D='\033[2m'; N='\033[0m'
+echo ""
+echo -e "${P}  ╔═══════════════════════════════════════════════════╗${N}"
+echo -e "${P}  ║  ${B}tmux Cheat Sheet${N}${P}  ·  prefix = ${B}{{ config.tmux_scripts.cheat.prefix }}${N}${P}              ║${N}"
+echo -e "${P}  ╚═══════════════════════════════════════════════════╝${N}"
+echo -e "  📍 ${B}Sessions${N}"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → d${N}  detach    ${C}{{ config.tmux_scripts.cheat.prefix }} → o${N}  sessionx    ${C}{{ config.tmux_scripts.cheat.prefix }} → \$${N}  rename"
+echo -e "  🪟 ${B}Windows${N}"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → c${N}  new       ${C}{{ config.tmux_scripts.cheat.prefix }} → ,${N}  rename      ${C}{{ config.tmux_scripts.cheat.prefix }} → n/p${N}  next/prev"
+echo -e "  📐 ${B}Panes${N}"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → |${N}  v-split   ${C}{{ config.tmux_scripts.cheat.prefix }} → -${N}  h-split     ${C}{{ config.tmux_scripts.cheat.prefix }} → z${N}  zoom"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → h/j/k/l${N}  navigate    ${C}{{ config.tmux_scripts.cheat.prefix }} → H/J/K/L${N}  resize"
+echo -e "  🤖 ${B}AI Agents${N}"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → Ctrl+C${N}  Claude    ${C}{{ config.tmux_scripts.cheat.prefix }} → Ctrl+X${N}  Codex"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → A${N}  tmux-ai   ${C}{{ config.tmux_scripts.cheat.prefix }} → P${N}  tmux-pair   ${C}{{ config.tmux_scripts.cheat.prefix }} → R${N}  tmux-review"
+echo -e "  🔧 ${B}Tools${N}"
+echo -e "    ${C}{{ config.tmux_scripts.cheat.prefix }} → g${N}  lazygit   ${C}{{ config.tmux_scripts.cheat.prefix }} → f${N}  yazi   ${C}{{ config.tmux_scripts.cheat.prefix }} → b${N}  btop   ${C}{{ config.tmux_scripts.cheat.prefix }} → p${N}  float   ${C}{{ config.tmux_scripts.cheat.prefix }} → T${N}  terminal"
+echo -e "  📋 ${B}Copy${N}  ${D}{{ config.tmux_scripts.cheat.prefix }} → [  then v=select y=copy q=exit${N}"
+echo -e "  ${D}Disable: export TMUX_CHEAT=0 · Reload: {{ config.tmux_scripts.cheat.prefix }} → r · Plugins: {{ config.tmux_scripts.cheat.prefix }} → I${N}"
+echo ""
+S5
+chmod +x "$SCRIPTS_DIR/tmux-cheat"
+print_step "tmux-cheat"

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Ayu Dark</string>
+  <key>settings</key>
+  <array>
+    <!-- Global settings -->
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key><string>{{ palette.bg | upper }}</string>
+        <key>foreground</key><string>{{ palette.fg | upper }}</string>
+        <key>caret</key><string>{{ palette.fg | upper }}</string>
+        <key>selection</key><string>{{ palette.selection | upper }}</string>
+        <key>lineHighlight</key><string>{{ palette.selection | upper }}</string>
+        <key>gutterForeground</key><string>{{ palette.gutter | upper }}</string>
+        <key>gutterBackground</key><string>{{ palette.bg | upper }}</string>
+        <key>guide</key><string>{{ palette.surface | upper }}</string>
+        <key>activeGuide</key><string>{{ palette.blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Comments -->
+    <dict>
+      <key>name</key><string>Comment</string>
+      <key>scope</key><string>comment, punctuation.definition.comment</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.comment | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Strings -->
+    <dict>
+      <key>name</key><string>String</string>
+      <key>scope</key><string>string, string.quoted</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Numbers -->
+    <dict>
+      <key>name</key><string>Number</string>
+      <key>scope</key><string>constant.numeric</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Constants -->
+    <dict>
+      <key>name</key><string>Constant</string>
+      <key>scope</key><string>constant, constant.language, constant.character</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Keywords -->
+    <dict>
+      <key>name</key><string>Keyword</string>
+      <key>scope</key><string>keyword, keyword.control, keyword.operator.logical, keyword.operator.new, storage.type, storage.modifier</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Operators -->
+    <dict>
+      <key>name</key><string>Operator</string>
+      <key>scope</key><string>keyword.operator, keyword.operator.assignment</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Functions -->
+    <dict>
+      <key>name</key><string>Function</string>
+      <key>scope</key><string>entity.name.function, meta.function-call, support.function</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Classes / Types -->
+    <dict>
+      <key>name</key><string>Class / Type</string>
+      <key>scope</key><string>entity.name.type, entity.name.class, support.type, support.class, entity.other.inherited-class</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Variables -->
+    <dict>
+      <key>name</key><string>Variable</string>
+      <key>scope</key><string>variable, variable.other, variable.parameter</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.fg | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Variable special (this, self) -->
+    <dict>
+      <key>name</key><string>Variable Special</string>
+      <key>scope</key><string>variable.language</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Tags (HTML/XML) -->
+    <dict>
+      <key>name</key><string>Tag</string>
+      <key>scope</key><string>entity.name.tag</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Tag attributes -->
+    <dict>
+      <key>name</key><string>Tag Attribute</string>
+      <key>scope</key><string>entity.other.attribute-name</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Punctuation -->
+    <dict>
+      <key>name</key><string>Punctuation</string>
+      <key>scope</key><string>punctuation, punctuation.definition.tag, punctuation.separator, punctuation.section</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.fg | upper }}80</string>
+      </dict>
+    </dict>
+    <!-- Markup heading -->
+    <dict>
+      <key>name</key><string>Markup Heading</string>
+      <key>scope</key><string>markup.heading, markup.heading entity.name</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+    <!-- Markup bold -->
+    <dict>
+      <key>name</key><string>Markup Bold</string>
+      <key>scope</key><string>markup.bold</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.orange | upper }}</string>
+        <key>fontStyle</key><string>bold</string>
+      </dict>
+    </dict>
+    <!-- Markup italic -->
+    <dict>
+      <key>name</key><string>Markup Italic</string>
+      <key>scope</key><string>markup.italic</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Markup link -->
+    <dict>
+      <key>name</key><string>Markup Link</string>
+      <key>scope</key><string>markup.underline.link, string.other.link</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Markup inline code -->
+    <dict>
+      <key>name</key><string>Markup Code</string>
+      <key>scope</key><string>markup.inline.raw, markup.raw.block</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff inserted -->
+    <dict>
+      <key>name</key><string>Diff Inserted</string>
+      <key>scope</key><string>markup.inserted, meta.diff.header.to-file</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.green | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff deleted -->
+    <dict>
+      <key>name</key><string>Diff Deleted</string>
+      <key>scope</key><string>markup.deleted, meta.diff.header.from-file</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Diff changed -->
+    <dict>
+      <key>name</key><string>Diff Changed</string>
+      <key>scope</key><string>markup.changed</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.yellow | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Regular expressions -->
+    <dict>
+      <key>name</key><string>Regex</string>
+      <key>scope</key><string>string.regexp</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_cyan | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Escape characters -->
+    <dict>
+      <key>name</key><string>Escape</string>
+      <key>scope</key><string>constant.character.escape</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_cyan | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Invalid -->
+    <dict>
+      <key>name</key><string>Invalid</string>
+      <key>scope</key><string>invalid, invalid.illegal</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Embedded / Template -->
+    <dict>
+      <key>name</key><string>Embedded</string>
+      <key>scope</key><string>punctuation.section.embedded, variable.interpolation</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_red | upper }}</string>
+      </dict>
+    </dict>
+    <!-- JSON keys -->
+    <dict>
+      <key>name</key><string>JSON Key</string>
+      <key>scope</key><string>support.type.property-name.json, meta.structure.dictionary.key string</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- YAML keys -->
+    <dict>
+      <key>name</key><string>YAML Key</string>
+      <key>scope</key><string>entity.name.tag.yaml</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- CSS properties -->
+    <dict>
+      <key>name</key><string>CSS Property</string>
+      <key>scope</key><string>support.type.property-name.css</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+    <!-- CSS values -->
+    <dict>
+      <key>name</key><string>CSS Value</string>
+      <key>scope</key><string>support.constant.property-value.css, constant.other.color.rgb-value.hex.css</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_purple | upper }}</string>
+      </dict>
+    </dict>
+    <!-- Shell variables -->
+    <dict>
+      <key>name</key><string>Shell Variable</string>
+      <key>scope</key><string>variable.other.normal.shell, variable.other.positional.shell, variable.other.bracket.shell</string>
+      <key>settings</key><dict>
+        <key>foreground</key><string>{{ palette.br_blue | upper }}</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

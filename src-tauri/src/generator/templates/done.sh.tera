@@ -1,0 +1,20 @@
+########################################################################
+# Done
+########################################################################
+echo ""
+echo -e "${c_surface}────────────────────────────────────────────────────────${c_reset}"
+elapsed=$(( $(date +%s) - start_time ))
+echo -e "  ${c_green}✓${c_reset} ${c_purple}${c_bold}GHOSTTY ULTIMATE — Ayu Dark${c_reset}  ${c_dim}(${elapsed}s)${c_reset}"
+if [[ $warn_count -gt 0 ]]; then
+  echo -e "  ${c_dim}${warn_count} warning(s) — review above${c_reset}"
+else
+  echo -e "  ${c_dim}Clean install — zero warnings${c_reset}"
+fi
+echo -e "${c_surface}────────────────────────────────────────────────────────${c_reset}"
+echo ""
+echo -e "  ${c_bold}1.${c_reset} source ~/.zshrc"
+echo -e "  ${c_bold}2.${c_reset} Cmd+Q Ghostty → reopen"
+echo -e "  ${c_bold}3.${c_reset} tmux → {{ config.tmux_scripts.cheat.prefix }} I ${c_faint}(install plugins)${c_reset}"
+echo -e "  ${c_bold}4.${c_reset} nvim ${c_faint}(auto-installs lazyvim + {{ config.neovim.theme }} + all plugins)${c_reset}"
+echo ""
+echo -e "  🤖 ${c_blue}cc${c_reset} Claude  ${c_blue}cx${c_reset} Codex  ${c_blue}gm${c_reset} Gemini  ${c_blue}ai${c_reset} Workspace  ${c_blue}lg${c_reset} Lazygit  ${c_blue}y${c_reset} Yazi"

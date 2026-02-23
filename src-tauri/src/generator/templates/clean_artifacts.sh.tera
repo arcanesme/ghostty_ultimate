@@ -1,0 +1,87 @@
+########################################################################
+# 1/13 — Clean Old Artifacts
+########################################################################
+print_header "1/13 — Cleaning Old Artifacts"
+
+{% if config.clean_artifacts.backup_configs %}
+# Back up major configs
+touch "$ZSHRC"
+cp "$ZSHRC" "${ZSHRC}${BACKUP_SUFFIX}" 2>/dev/null || true
+[[ -d "$HOME/.config/nvim" ]] && mv "$HOME/.config/nvim" "$HOME/.config/nvim${BACKUP_SUFFIX}" 2>/dev/null || true
+[[ -f "$HOME/.tmux.conf" ]] && cp "$HOME/.tmux.conf" "$HOME/.tmux.conf${BACKUP_SUFFIX}" 2>/dev/null || true
+[[ -f "$HOME/.config/starship.toml" ]] && cp "$HOME/.config/starship.toml" "$HOME/.config/starship.toml${BACKUP_SUFFIX}" 2>/dev/null || true
+print_step "Backed up .zshrc, nvim, tmux, and starship configs"
+{% endif %}
+
+{% if config.clean_artifacts.clean_nvim_state %}
+# Neovim state: back up instead of deleting, clear only cache
+[[ -d "$HOME/.local/share/nvim" ]] && mv "$HOME/.local/share/nvim" "$HOME/.local/share/nvim${BACKUP_SUFFIX}" 2>/dev/null || true
+[[ -d "$HOME/.local/state/nvim" ]] && mv "$HOME/.local/state/nvim" "$HOME/.local/state/nvim${BACKUP_SUFFIX}" 2>/dev/null || true
+rm -rf "$HOME/.cache/nvim" 2>/dev/null || true
+print_step "Backed up Neovim state, cleared cache"
+{% endif %}
+
+{% if config.clean_artifacts.remove_catppuccin %}
+# Remove legacy Catppuccin tmux plugin (replaced by inline Ayu Dark)
+rm -rf "$HOME/.config/tmux/plugins/catppuccin" 2>/dev/null || true
+{% endif %}
+
+{% if config.clean_artifacts.clean_zshrc %}
+# Remove existing GHOSTTY ULTIMATE block (single awk pass replaces 30+ sed calls)
+if grep -q '══ GHOSTTY ULTIMATE' "$ZSHRC" 2>/dev/null; then
+  awk '/══ GHOSTTY ULTIMATE/,/══ END GHOSTTY ULTIMATE/{next}1' "$ZSHRC" > "${ZSHRC}.awk.tmp" \
+    && mv "${ZSHRC}.awk.tmp" "$ZSHRC"
+fi
+
+# Clean stale tool inits and duplicate aliases (consolidated into one sed invocation)
+sed -i '' \
+  -e '/fastfetch/d' \
+  -e '/Terminal Splash/d' \
+  -e '/tmux-cheat/d' \
+  -e '/TMUX_CHEAT/d' \
+  -e '/Phase [0-9]/d' \
+  -e '/eval "\$(starship init zsh)"/d' \
+  -e '/eval "\$(zoxide init zsh)"/d' \
+  -e '/eval "\$(atuin init zsh/d' \
+  -e '/source <(fzf --zsh/d' \
+  -e '/\[ -f ~\/.fzf.zsh \] && source/d' \
+  -e '/^alias ls=.*eza/d' \
+  -e '/^alias ll=.*eza/d' \
+  -e '/^alias la=.*eza/d' \
+  -e '/^alias tree=.*eza/d' \
+  -e '/^alias lt=.*eza/d' \
+  -e '/^alias cat=.*bat/d' \
+  -e '/^alias grep=.*rg/d' \
+  -e '/^alias find=.*fd/d' \
+  -e '/^alias vim=.*nvim/d' \
+  -e '/^alias vi=.*nvim/d' \
+  -e '/^alias cc=.*claude/d' \
+  -e '/^alias gm=.*gemini/d' \
+  -e '/^alias cx=.*codex/d' \
+  -e '/AGENTIC WORKFLOW/d' \
+  -e '/^ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=/d' \
+  -e '/^ZSH_AUTOSUGGEST_STRATEGY=/d' \
+  -e '/^export EDITOR=.*nvim/d' \
+  -e '/^export VISUAL=.*nvim/d' \
+  -e '/^export BAT_THEME=/d' \
+  "$ZSHRC" 2>/dev/null || true
+
+# Collapse excessive blank lines (portable awk, no perl dependency)
+awk 'NF{blank=0; print; next} !blank++' "$ZSHRC" > "${ZSHRC}.blank.tmp" \
+  && mv "${ZSHRC}.blank.tmp" "$ZSHRC"
+print_step "Cleaned .zshrc remnants"
+{% endif %}
+
+{% if config.clean_artifacts.remove_legacy_scripts %}
+rm -f \
+  "$HOME/Downloads/setup-ghostty.sh" \
+  "$HOME/Downloads/enhance-ghostty.sh" \
+  "$HOME/Downloads/phase3-ghostty.sh" \
+  "$HOME/Downloads/phase4-ghostty.sh" \
+  "$HOME/Downloads/phase5-ghostty.sh" \
+  "$HOME/Downloads/phase6-ghostty.sh" \
+  "$HOME/Downloads/fastfetch-config.jsonc" \
+  "$HOME/Downloads/ghostty-config" \
+  "$HOME/Downloads/starship.toml" 2>/dev/null || true
+print_step "Removed legacy setup scripts"
+{% endif %}

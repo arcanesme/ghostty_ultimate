@@ -1,0 +1,115 @@
+# Ayu Dark theme for Yazi
+
+[manager]
+cwd = { fg = "{{ palette.blue }}" }
+
+hovered         = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+preview_hovered = { bg = "{{ palette.selection }}" }
+
+find_keyword  = { fg = "{{ palette.yellow }}", bold = true }
+find_position = { fg = "{{ palette.purple }}", bg = "reset" }
+
+marker_copied   = { fg = "{{ palette.green }}", bg = "{{ palette.green }}" }
+marker_cut      = { fg = "{{ palette.red }}", bg = "{{ palette.red }}" }
+marker_marked   = { fg = "{{ palette.blue }}", bg = "{{ palette.blue }}" }
+marker_selected = { fg = "{{ palette.purple }}", bg = "{{ palette.purple }}" }
+
+tab_active   = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}", bold = true }
+tab_inactive = { bg = "{{ palette.bg }}", fg = "{{ palette.comment }}" }
+tab_width    = 1
+
+count_copied   = { fg = "{{ palette.bg }}", bg = "{{ palette.green }}" }
+count_cut      = { fg = "{{ palette.bg }}", bg = "{{ palette.red }}" }
+count_selected = { fg = "{{ palette.bg }}", bg = "{{ palette.purple }}" }
+
+border_symbol = "│"
+border_style  = { fg = "{{ palette.surface }}" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "{{ palette.surface }}" }
+
+mode_normal = { bg = "{{ palette.blue }}", fg = "{{ palette.bg }}", bold = true }
+mode_select = { bg = "{{ palette.purple }}", fg = "{{ palette.bg }}", bold = true }
+mode_unset  = { bg = "{{ palette.red }}", fg = "{{ palette.bg }}", bold = true }
+
+progress_label  = { fg = "{{ palette.fg }}", bold = true }
+progress_normal = { fg = "{{ palette.blue }}", bg = "{{ palette.surface }}" }
+progress_error  = { fg = "{{ palette.red }}", bg = "{{ palette.surface }}" }
+
+permissions_t = { fg = "{{ palette.blue }}" }
+permissions_r = { fg = "{{ palette.yellow }}" }
+permissions_w = { fg = "{{ palette.red }}" }
+permissions_x = { fg = "{{ palette.green }}" }
+permissions_s = { fg = "{{ palette.comment }}" }
+
+[input]
+border   = { fg = "{{ palette.blue }}" }
+title    = { fg = "{{ palette.blue }}" }
+value    = { fg = "{{ palette.fg }}" }
+selected = { bg = "{{ palette.selection }}" }
+
+[pick]
+border   = { fg = "{{ palette.blue }}" }
+active   = { fg = "{{ palette.purple }}", bold = true }
+inactive = { fg = "{{ palette.fg }}" }
+
+[confirm]
+border   = { fg = "{{ palette.blue }}" }
+title    = { fg = "{{ palette.blue }}" }
+content  = { fg = "{{ palette.fg }}" }
+list     = { fg = "{{ palette.fg }}" }
+btn_yes  = { bg = "{{ palette.selection }}", fg = "{{ palette.green }}" }
+btn_no   = { bg = "{{ palette.selection }}", fg = "{{ palette.red }}" }
+btn_label = { fg = "{{ palette.fg }}", bold = true }
+
+[completion]
+border   = { fg = "{{ palette.blue }}" }
+active   = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+inactive = { fg = "{{ palette.comment }}" }
+
+[tasks]
+border  = { fg = "{{ palette.blue }}" }
+title   = { fg = "{{ palette.blue }}" }
+hovered = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}" }
+
+[which]
+cols = 3
+mask            = { bg = "{{ palette.bg }}" }
+cand            = { fg = "{{ palette.cyan }}" }
+rest            = { fg = "{{ palette.comment }}" }
+desc            = { fg = "{{ palette.purple }}" }
+separator       = "  "
+separator_style = { fg = "{{ palette.surface }}" }
+
+[help]
+on      = { fg = "{{ palette.blue }}" }
+run     = { fg = "{{ palette.purple }}" }
+desc    = { fg = "{{ palette.comment }}" }
+hovered = { bg = "{{ palette.selection }}", fg = "{{ palette.fg }}", bold = true }
+footer  = { fg = "{{ palette.comment }}", bg = "{{ palette.bg }}" }
+
+[notify]
+title_info  = { fg = "{{ palette.blue }}" }
+title_warn  = { fg = "{{ palette.yellow }}" }
+title_error = { fg = "{{ palette.red }}" }
+
+[filetype]
+rules = [
+  { mime = "image/*", fg = "{{ palette.purple }}" },
+  { mime = "video/*", fg = "{{ palette.yellow }}" },
+  { mime = "audio/*", fg = "{{ palette.yellow }}" },
+  { mime = "application/zip",    fg = "{{ palette.red }}" },
+  { mime = "application/gzip",   fg = "{{ palette.red }}" },
+  { mime = "application/x-tar",  fg = "{{ palette.red }}" },
+  { mime = "application/x-7z*",  fg = "{{ palette.red }}" },
+  { mime = "application/x-rar",  fg = "{{ palette.red }}" },
+  { mime = "application/x-bzip*",fg = "{{ palette.red }}" },
+  { mime = "application/pdf",    fg = "{{ palette.red }}" },
+  { mime = "application/json",   fg = "{{ palette.yellow }}" },
+  { mime = "application/xml",    fg = "{{ palette.yellow }}" },
+  { mime = "text/*", fg = "{{ palette.fg }}" },
+  { name = "*", fg = "{{ palette.fg }}" },
+  { name = "*/", fg = "{{ palette.blue }}", bold = true },
+]

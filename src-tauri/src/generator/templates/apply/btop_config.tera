@@ -1,0 +1,7 @@
+color_theme = "{{ config.themes.btop.color_theme }}"
+theme_background = {{ config.themes.btop.theme_background | bool_to_str }}
+truecolor = {{ config.themes.btop.truecolor | bool_to_str }}
+shown_boxes = "{{ config.themes.btop.shown_boxes }}"
+update_ms = {{ config.themes.btop.update_ms }}
+proc_sorting = "{{ config.themes.btop.proc_sorting }}"
+proc_tree = {{ config.themes.btop.proc_tree | bool_to_str }}

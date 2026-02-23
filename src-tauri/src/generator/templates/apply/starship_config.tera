@@ -1,0 +1,76 @@
+add_newline = {{ config.starship.add_newline | bool_to_str }}
+format = """{{ config.starship.format }}"""
+palette = "ayu_dark"
+command_timeout = {{ config.starship.command_timeout }}
+
+[fill]
+symbol = "{{ config.starship.fill_symbol }}"
+
+[character]
+vicmd_symbol = "{{ config.starship.character_vicmd_symbol }}"
+success_symbol = '{{ config.starship.character_success_symbol }}'
+error_symbol = '{{ config.starship.character_error_symbol }}'
+
+[directory]
+style = "{{ config.starship.directory_style }}"
+format = "{{ config.starship.directory_format }}"
+truncation_length = {{ config.starship.directory_truncation_length }}
+truncation_symbol = "{{ config.starship.directory_truncation_symbol }}"
+
+[git_branch]
+symbol = "{{ config.starship.git_branch_symbol }}"
+style = "{{ config.starship.git_branch_style }}"
+format = "{{ config.starship.git_branch_format }}"
+
+[git_status]
+style = "{{ config.starship.git_status_style }}"
+format = "{{ config.starship.git_status_format }}"
+
+[nodejs]
+symbol = "{{ config.starship.nodejs_symbol }}"
+style = "{{ config.starship.nodejs_style }}"
+format = "[$symbol$version]($style) "
+
+[python]
+symbol = "{{ config.starship.python_symbol }}"
+style = "{{ config.starship.python_style }}"
+format = "[$symbol$version]($style) "
+detect_files = [".python-version", "requirements.txt", "Pipfile", "pyproject.toml"]
+
+[rust]
+symbol = "{{ config.starship.rust_symbol }}"
+style = "{{ config.starship.rust_style }}"
+format = "[$symbol$version]($style) "
+
+[golang]
+symbol = "{{ config.starship.golang_symbol }}"
+style = "{{ config.starship.golang_style }}"
+format = "[$symbol$version]($style) "
+
+[docker_context]
+symbol = "{{ config.starship.docker_symbol }}"
+style = "{{ config.starship.docker_style }}"
+format = "[$symbol$context]($style) "
+only_with_files = {{ config.starship.docker_only_with_files | bool_to_str }}
+
+[cmd_duration]
+min_time = {{ config.starship.cmd_duration_min_time }}
+style = "{{ config.starship.cmd_duration_style }}"
+format = "{{ config.starship.cmd_duration_format }}"
+
+[time]
+disabled = {{ config.starship.time_disabled | bool_to_str }}
+style = "{{ config.starship.time_style }}"
+format = "{{ config.starship.time_format }}"
+time_format = "{{ config.starship.time_time_format }}"
+
+[palettes.ayu_dark]
+red     = "{{ palette.red }}"
+green   = "{{ palette.green }}"
+yellow  = "{{ palette.yellow }}"
+blue    = "{{ palette.blue }}"
+purple  = "{{ palette.purple }}"
+cyan    = "{{ palette.cyan }}"
+orange  = "{{ palette.orange }}"
+fg      = "{{ palette.fg }}"
+comment = "{{ palette.comment }}"
