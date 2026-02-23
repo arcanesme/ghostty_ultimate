@@ -1,6 +1,12 @@
 <script lang="ts">
   import { configState } from "$lib/state/config.svelte";
   import { executionState } from "$lib/state/execution.svelte";
+  import { uiState } from "$lib/state/ui.svelte";
+  import { SECTIONS } from "$lib/api/types";
+
+  let sectionLabel = $derived(
+    SECTIONS.find((s) => s.id === uiState.activeSection)?.label ?? uiState.activeSection
+  );
 </script>
 
 <footer class="statusbar">
@@ -10,6 +16,8 @@
     {:else}
       <span class="clean-indicator">Clean</span>
     {/if}
+    <span class="separator">|</span>
+    <span class="section-name">{sectionLabel}</span>
   </div>
   <div class="center">
     {#if executionState.running}
@@ -21,6 +29,8 @@
     {/if}
   </div>
   <div class="right">
+    <span class="shortcut-hint">Cmd+S to apply</span>
+    <span class="separator">|</span>
     <span class="palette-name">
       {configState.config.palette.bg}
     </span>
@@ -56,6 +66,18 @@
   }
   .completed {
     color: var(--green);
+  }
+  .section-name {
+    color: var(--blue);
+    font-weight: 500;
+  }
+  .separator {
+    color: color-mix(in srgb, var(--comment) 40%, transparent);
+  }
+  .shortcut-hint {
+    color: var(--comment);
+    opacity: 0.7;
+    font-size: 10px;
   }
   .palette-name {
     color: var(--comment);

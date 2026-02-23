@@ -87,6 +87,7 @@
       <div class="field-row">
         <Select
           label="Status Position"
+          description="Position of the tmux status bar"
           bind:value={configState.config.tmux.status_position}
           options={[
             { value: "top", label: "Top" },
@@ -95,6 +96,7 @@
         />
         <Select
           label="Mode Keys"
+          description="Key binding style for copy mode"
           bind:value={configState.config.tmux.mode_keys}
           options={[
             { value: "vi", label: "vi" },
@@ -135,12 +137,14 @@
       <div class="field-row">
         <TextInput
           label="Width"
+          description="Floating pane width (percentage or columns)"
           bind:value={configState.config.tmux.floax_width}
           monospace
           placeholder="80%"
         />
         <TextInput
           label="Height"
+          description="Floating pane height (percentage or rows)"
           bind:value={configState.config.tmux.floax_height}
           monospace
           placeholder="80%"
@@ -148,6 +152,7 @@
       </div>
       <TextInput
         label="Border Color"
+        description="Border color of the floating pane"
         bind:value={configState.config.tmux.floax_border_color}
         monospace
       />
@@ -173,12 +178,14 @@
       <div class="field-row">
         <TextInput
           label="Window Width"
+          description="Session picker window width"
           bind:value={configState.config.tmux.sessionx_window_width}
           monospace
           placeholder="75%"
         />
         <TextInput
           label="Window Height"
+          description="Session picker window height"
           bind:value={configState.config.tmux.sessionx_window_height}
           monospace
           placeholder="85%"

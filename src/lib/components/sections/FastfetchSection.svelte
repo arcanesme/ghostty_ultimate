@@ -47,6 +47,7 @@
     <div class="field-group">
       <Select
         label="Logo Type"
+        description="Size of the ASCII logo displayed"
         bind:value={configState.config.fastfetch.logo_type}
         options={[
           { value: "small", label: "Small" },
@@ -71,6 +72,7 @@
       <div class="field-row">
         <TextInput
           label="Separator"
+          description="Character between label and value columns"
           bind:value={configState.config.fastfetch.separator}
           monospace
         />

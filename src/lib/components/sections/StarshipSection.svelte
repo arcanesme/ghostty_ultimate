@@ -98,6 +98,7 @@
     <div class="field-group">
       <TextInput
         label="Style"
+        description="Prompt directory display style (bold, dimmed, etc.)"
         bind:value={configState.config.starship.directory_style}
         monospace
       />
@@ -110,6 +111,7 @@
       />
       <TextInput
         label="Truncation Symbol"
+        description="Character shown when path is truncated"
         bind:value={configState.config.starship.directory_truncation_symbol}
         monospace
       />

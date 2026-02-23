@@ -1,11 +1,34 @@
 <script lang="ts">
   import { configState } from "$lib/state/config.svelte";
   import { uiState } from "$lib/state/ui.svelte";
-  import { generateScript, saveProfile, listProfiles, loadProfile } from "$lib/api/invoke";
+  import {
+    generateScript,
+    saveProfile,
+    listProfiles,
+    loadProfile,
+    deleteProfile,
+    exportProfile,
+    importProfile,
+  } from "$lib/api/invoke";
+  import { save, open } from "@tauri-apps/plugin-dialog";
+  import { onMount } from "svelte";
+  import AboutModal from "$lib/components/shared/AboutModal.svelte";
 
   let showProfileMenu = $state(false);
   let profileName = $state("");
   let profiles = $state<string[]>([]);
+  let showAbout = $state(false);
+
+  // Reset confirmation state
+  let resetPending = $state(false);
+  let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Cleanup reset timer on destroy
+  $effect(() => {
+    return () => {
+      if (resetTimer) clearTimeout(resetTimer);
+    };
+  });
 
   async function handleGenerate() {
     try {
@@ -26,6 +49,7 @@
     if (!profileName) return;
     try {
       await saveProfile(profileName, configState.config);
+      uiState.toast(`Profile "${profileName}" saved`, "success");
       profileName = "";
       showProfileMenu = false;
     } catch (e) {
@@ -48,9 +72,69 @@
     try {
       const config = await loadProfile(name);
       configState.loadConfig(config);
+      uiState.toast(`Profile "${name}" loaded`, "success");
       showProfileMenu = false;
     } catch (e) {
       console.error("Load failed:", e);
+    }
+  }
+
+  async function handleDeleteProfile(name: string, e: MouseEvent) {
+    e.stopPropagation();
+    try {
+      await deleteProfile(name);
+      profiles = profiles.filter((p) => p !== name);
+      uiState.toast(`Profile "${name}" deleted`, "success");
+    } catch (err) {
+      uiState.toast(`Delete failed: ${err}`, "error");
+    }
+  }
+
+  async function handleExport() {
+    try {
+      const path = await save({
+        defaultPath: "ghostty-config.json",
+        filters: [{ name: "JSON", extensions: ["json"] }],
+      });
+      if (path) {
+        await exportProfile(configState.config, path);
+        uiState.toast("Config exported", "success");
+      }
+    } catch (e) {
+      uiState.toast(`Export failed: ${e}`, "error");
+    }
+  }
+
+  async function handleImport() {
+    try {
+      const path = await open({
+        filters: [{ name: "JSON", extensions: ["json"] }],
+        multiple: false,
+      });
+      if (path) {
+        const config = await importProfile(path as string);
+        configState.loadConfig(config);
+        uiState.toast("Config imported", "success");
+        showProfileMenu = false;
+      }
+    } catch (e) {
+      uiState.toast(`Import failed: ${e}`, "error");
+    }
+  }
+
+  function handleReset() {
+    if (resetPending) {
+      // Second click — actually reset
+      if (resetTimer) clearTimeout(resetTimer);
+      resetPending = false;
+      configState.resetToDefaults();
+      uiState.toast("Reset to defaults", "success");
+    } else {
+      // First click — enter confirmation state
+      resetPending = true;
+      resetTimer = setTimeout(() => {
+        resetPending = false;
+      }, 3000);
     }
   }
 
@@ -61,6 +145,21 @@
   function toggleAutoApply() {
     configState.autoApply = !configState.autoApply;
   }
+
+  // Listen for keyboard shortcuts dispatched from App.svelte
+  onMount(() => {
+    const profileHandler = () => toggleProfileMenu();
+    const exportHandler = () => handleExport();
+    const generateHandler = () => handleGenerate();
+    window.addEventListener("toggle-profile-menu", profileHandler);
+    window.addEventListener("trigger-export", exportHandler);
+    window.addEventListener("trigger-generate", generateHandler);
+    return () => {
+      window.removeEventListener("toggle-profile-menu", profileHandler);
+      window.removeEventListener("trigger-export", exportHandler);
+      window.removeEventListener("trigger-generate", generateHandler);
+    };
+  });
 </script>
 
 <header class="header">
@@ -127,20 +226,44 @@
             />
             <button class="btn btn-sm" onclick={handleSave}>Save</button>
           </div>
+          <div class="profile-actions">
+            <button class="btn btn-sm btn-action" onclick={handleExport} title="Export config to file">
+              Export
+            </button>
+            <button class="btn btn-sm btn-action" onclick={handleImport} title="Import config from file">
+              Import
+            </button>
+          </div>
           {#if profiles.length > 0}
             <div class="profile-list">
               {#each profiles as p}
-                <button class="profile-item" onclick={() => handleLoadProfile(p)}>
-                  {p}
-                </button>
+                <div class="profile-item-row">
+                  <button class="profile-item" onclick={() => handleLoadProfile(p)}>
+                    {p}
+                  </button>
+                  <button
+                    class="profile-delete"
+                    onclick={(e) => handleDeleteProfile(p, e)}
+                    title="Delete profile"
+                  >
+                    &times;
+                  </button>
+                </div>
               {/each}
             </div>
           {/if}
         </div>
       {/if}
     </div>
-    <button class="btn btn-ghost" onclick={() => configState.resetToDefaults()}>
-      Reset
+    <button
+      class="btn btn-ghost"
+      class:btn-reset-confirm={resetPending}
+      onclick={handleReset}
+    >
+      {resetPending ? "Are you sure?" : "Reset"}
+    </button>
+    <button class="btn btn-ghost" onclick={() => (showAbout = true)}>
+      About
     </button>
     <button class="btn btn-secondary" onclick={handleGenerate}>
       Preview Script
@@ -150,6 +273,8 @@
     </button>
   </div>
 </header>
+
+<AboutModal bind:show={showAbout} />
 
 <style>
   .header {
@@ -217,6 +342,17 @@
     color: var(--fg);
   }
 
+  .btn-reset-confirm {
+    color: var(--red);
+    background: color-mix(in srgb, var(--red) 12%, transparent);
+    animation: pulse-red 0.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-red {
+    from { border-color: transparent; }
+    to { border-color: color-mix(in srgb, var(--red) 40%, transparent); }
+  }
+
   .btn-secondary {
     background: var(--surface);
     color: var(--blue);
@@ -241,6 +377,16 @@
     background: var(--blue);
     color: var(--bg);
     font-weight: 600;
+  }
+
+  .btn-action {
+    background: color-mix(in srgb, var(--purple) 15%, var(--surface));
+    color: var(--purple);
+    border: 1px solid color-mix(in srgb, var(--purple) 25%, transparent);
+    font-weight: 500;
+  }
+  .btn-action:hover {
+    background: color-mix(in srgb, var(--purple) 25%, var(--surface));
   }
 
   /* Apply controls */
@@ -341,7 +487,7 @@
     border: 1px solid color-mix(in srgb, var(--comment) 20%, transparent);
     border-radius: 8px;
     padding: 8px;
-    min-width: 200px;
+    min-width: 220px;
     z-index: 200;
   }
 
@@ -362,13 +508,32 @@
     font-size: 11px;
   }
 
+  .profile-actions {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--comment) 15%, transparent);
+  }
+
+  .profile-actions .btn-sm {
+    flex: 1;
+  }
+
   .profile-list {
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
 
+  .profile-item-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .profile-item {
+    flex: 1;
     background: none;
     border: none;
     color: var(--fg);
@@ -381,5 +546,22 @@
   }
   .profile-item:hover {
     background: var(--selection);
+  }
+
+  .profile-delete {
+    background: none;
+    border: none;
+    color: var(--red);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    line-height: 1;
+  }
+  .profile-delete:hover {
+    opacity: 1;
+    background: color-mix(in srgb, var(--red) 10%, transparent);
   }
 </style>

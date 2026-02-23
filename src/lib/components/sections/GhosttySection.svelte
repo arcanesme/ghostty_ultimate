@@ -57,12 +57,14 @@
     <div class="field-group">
       <TextInput
         label="Font Family"
+        description="Primary font face for terminal text"
         bind:value={configState.config.ghostty.font_family}
         placeholder="JetBrains Mono"
         monospace
       />
       <TextInput
         label="Font Family (Bold)"
+        description="Font face used for bold text (leave empty to auto-derive)"
         bind:value={configState.config.ghostty.font_family_bold}
         placeholder="JetBrains Mono ExtraBold"
         monospace
@@ -70,6 +72,7 @@
       <div class="field-row">
         <NumberInput
           label="Font Size"
+          description="Font size in points"
           bind:value={configState.config.ghostty.font_size}
           min={8}
           max={72}
@@ -105,12 +108,14 @@
       <div class="field-row">
         <NumberInput
           label="Padding X"
+          description="Horizontal padding in pixels around terminal content"
           bind:value={configState.config.ghostty.window_padding_x}
           min={0}
           max={200}
         />
         <NumberInput
           label="Padding Y"
+          description="Vertical padding in pixels around terminal content"
           bind:value={configState.config.ghostty.window_padding_y}
           min={0}
           max={200}
@@ -124,6 +129,7 @@
       <div class="field-row">
         <Select
           label="Window Decoration"
+          description="Window border and titlebar decoration style"
           bind:value={configState.config.ghostty.window_decoration}
           options={[
             { value: "auto", label: "Auto" },
@@ -132,6 +138,7 @@
         />
         <Select
           label="Window Colorspace"
+          description="Color profile used for rendering"
           bind:value={configState.config.ghostty.window_colorspace}
           options={[
             { value: "srgb", label: "sRGB" },
@@ -148,6 +155,7 @@
     <div class="field-group">
       <Select
         label="Titlebar Style"
+        description="macOS titlebar appearance (hidden removes title text)"
         bind:value={configState.config.ghostty.macos_titlebar_style}
         options={[
           { value: "transparent", label: "Transparent" },
@@ -232,6 +240,7 @@
     <div class="field-group">
       <Select
         label="Cursor Style"
+        description="Shape of the terminal cursor"
         bind:value={configState.config.ghostty.cursor_style}
         options={[
           { value: "bar", label: "Bar" },
@@ -266,6 +275,7 @@
       />
       <Select
         label="Shell Integration"
+        description="Level of shell integration features to enable"
         bind:value={configState.config.ghostty.shell_integration}
         options={[
           { value: "zsh", label: "zsh" },
@@ -277,6 +287,7 @@
       <div class="field-row">
         <Select
           label="Clipboard Read"
+          description="Allow programs to read from system clipboard"
           bind:value={configState.config.ghostty.clipboard_read}
           options={[
             { value: "allow", label: "Allow" },
@@ -286,6 +297,7 @@
         />
         <Select
           label="Clipboard Write"
+          description="Allow programs to write to system clipboard"
           bind:value={configState.config.ghostty.clipboard_write}
           options={[
             { value: "allow", label: "Allow" },
@@ -296,10 +308,12 @@
       </div>
       <Toggle
         label="Hide Mouse While Typing"
+        description="Automatically hide the mouse cursor during keyboard input"
         bind:value={configState.config.ghostty.mouse_hide_while_typing}
       />
       <Select
         label="Confirm Close Surface"
+        description="Ask for confirmation before closing a terminal tab or split"
         bind:value={configState.config.ghostty.confirm_close_surface}
         options={[
           { value: "true", label: "True" },

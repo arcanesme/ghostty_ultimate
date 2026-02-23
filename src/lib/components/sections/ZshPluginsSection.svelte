@@ -114,6 +114,7 @@
       <h4 class="sub-sub-heading">Sorting</h4>
       <Select
         label="Sort By"
+        description="File sorting method in directory listings"
         bind:value={configState.config.zsh_plugins.yazi.sort_by}
         options={[
           { value: "alphabetical", label: "Alphabetical" },
@@ -126,14 +127,17 @@
       />
       <Toggle
         label="Case Sensitive"
+        description="Treat uppercase and lowercase as different when sorting"
         bind:value={configState.config.zsh_plugins.yazi.sort_sensitive}
       />
       <Toggle
         label="Reverse Order"
+        description="Reverse the sort direction"
         bind:value={configState.config.zsh_plugins.yazi.sort_reverse}
       />
       <Toggle
         label="Directories First"
+        description="Always show directories before files"
         bind:value={configState.config.zsh_plugins.yazi.sort_dir_first}
       />
     </div>
@@ -143,10 +147,12 @@
       <h4 class="sub-sub-heading">Display</h4>
       <Toggle
         label="Show Hidden Files"
+        description="Display dotfiles and hidden entries"
         bind:value={configState.config.zsh_plugins.yazi.show_hidden}
       />
       <Toggle
         label="Show Symlinks"
+        description="Show symbolic link targets"
         bind:value={configState.config.zsh_plugins.yazi.show_symlink}
       />
       <NumberInput
@@ -163,6 +169,7 @@
       <h4 class="sub-sub-heading">Preview</h4>
       <NumberInput
         label="Tab Size"
+        description="Number of spaces per tab in file previews"
         bind:value={configState.config.zsh_plugins.yazi.preview_tab_size}
         min={1}
         max={8}
@@ -170,6 +177,7 @@
       <div class="field-row">
         <NumberInput
           label="Max Width"
+          description="Maximum pixel width for image previews"
           bind:value={configState.config.zsh_plugins.yazi.preview_max_width}
           min={100}
           max={3840}
@@ -177,6 +185,7 @@
         />
         <NumberInput
           label="Max Height"
+          description="Maximum pixel height for image previews"
           bind:value={configState.config.zsh_plugins.yazi.preview_max_height}
           min={100}
           max={2160}
@@ -185,6 +194,7 @@
       </div>
       <Select
         label="Image Filter"
+        description="Resampling filter for image preview scaling"
         bind:value={configState.config.zsh_plugins.yazi.preview_image_filter}
         options={[
           { value: "lanczos3", label: "Lanczos3" },

@@ -1,12 +1,18 @@
 <script lang="ts">
-  let { label, value = $bindable() }: {
+  let { label, value = $bindable(), description = "" }: {
     label: string;
     value: string;
+    description?: string;
   } = $props();
 </script>
 
 <label class="color-field">
-  <span class="color-label">{label}</span>
+  <div class="color-info">
+    <span class="color-label">{label}</span>
+    {#if description}
+      <span class="color-desc">{description}</span>
+    {/if}
+  </div>
   <span class="color-input-group">
     <input type="color" class="color-picker" bind:value />
     <input
@@ -28,10 +34,21 @@
     gap: 8px;
   }
 
+  .color-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   .color-label {
     font-size: 12px;
     color: var(--fg);
     min-width: 70px;
+  }
+
+  .color-desc {
+    font-size: 11px;
+    color: var(--comment);
   }
 
   .color-input-group {
