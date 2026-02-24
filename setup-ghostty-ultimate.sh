@@ -162,7 +162,7 @@ print_header "📦 2/13 — Packages"
 
 brew_packages=(
   starship eza bat fzf ripgrep fd zoxide tmux neovim atuin
-  yazi fastfetch lazygit gh git-delta btop dust procs
+  yazi fastfetch lazygit lazydocker gh git-delta btop dust procs
   hyperfine tokei gping curlie ffmpeg sevenzip poppler jq tlrc
   trash-cli zsh-completions
 )
@@ -196,6 +196,15 @@ if ! font_installed "JetBrains"; then
     && print_step "JetBrains Mono + Nerd Font" || print_warn "JetBrains Mono install failed"
 else
   print_skip "JetBrains Mono"
+fi
+
+if command -v npm &>/dev/null; then
+  if ! command -v claude &>/dev/null; then
+    print_step "Installing Claude CLI via npm..."
+    npm install -g @anthropic-ai/claude-code --force 2>/dev/null || print_warn "Claude install failed"
+  else
+    print_skip "Claude CLI (already installed)"
+  fi
 fi
 
 ########################################################################
@@ -271,9 +280,9 @@ window-decoration       = auto
 mouse-hide-while-typing = true
 
 # ── Background ────────────────────────────────────────────────────
-background-opacity      = 0.93
-background-blur         = 32
-unfocused-split-opacity = 0.78
+background-opacity      = 0.80
+background-blur         = 20
+unfocused-split-opacity = 0.70
 minimum-contrast        = 1.3
 bold-is-bright          = true
 
@@ -483,7 +492,7 @@ cat > "$FF_DIR/config.jsonc" << 'FF'
     { "type": "battery",   "key": "  Batt" },
     { "type": "separator", "string": "\u2500" },
     { "type": "command",   "key": "\u276f ", "text": "shuf -n1 ~/.config/fastfetch/quotes.txt 2>/dev/null || echo 'The obstacle is the way.'" },
-    { "type": "custom",    "format": "❯ {#35} tmux{#}  {#36}cc{#} claude  {#36}cx{#} codex  {#36}gm{#} gemini  {#36}ai{#} workspace" },
+    { "type": "custom",    "format": "❯ {#35} tmux{#}  {#36}cc{#} claude  {#36}gm{#} gemini  {#36}ai{#} workspace" },
     "break",
     { "type": "colors",    "symbol": "circle" }
   ]
@@ -528,6 +537,12 @@ show_symlink   = true
 tab_size   = 2
 max_width  = 800
 max_height = 600
+
+[plugin]
+prepend_fetchers = [
+  { id = "git", name = "*", run = "git" },
+  { id = "git", name = "*/", run = "git" },
+]
 YZ
 
 cat > "$HOME/.config/yazi/keymap.toml" << 'YK'
@@ -540,8 +555,19 @@ desc = "Open shell here"
 on  = ["."]
 run = "hidden"
 desc = "Toggle hidden files"
+
+[[manager.prepend_keymap]]
+on   = [ "Z" ]
+run  = "plugin zoxide"
+desc = "Jump to a directory using Zoxide"
 YK
 print_step "Yazi config + keymap"
+
+if command -v ya &>/dev/null; then
+  ya pack -a yazi-rs/plugins:git 2>/dev/null || true
+  ya pack -a yazi-rs/plugins:zoxide 2>/dev/null || true
+  print_step "Yazi Git & Zoxide plugins installed"
+fi
 
 ########################################################################
 # 7/13 — tmux (Ayu Dark — no plugin dependencies)
@@ -650,8 +676,9 @@ bind P run-shell "tmux-pair #{pane_current_path}"
 bind R run-shell "tmux-review #{pane_current_path}"
 
 bind C-c display-popup -E -w 80% -h 80% "claude"
-bind C-x display-popup -E -w 80% -h 80% "codex"
+bind C-g display-popup -E -w 80% -h 80% "gemini"
 bind T   display-popup -E -w 60% -h 50% "zsh"
+bind d display-popup -E -w 90% -h 90% "lazydocker 2>/dev/null || echo 'lazydocker not installed'"
 bind g display-popup -E -w 90% -h 90% "lazygit 2>/dev/null || git log --oneline --graph -20"
 bind f display-popup -E -w 90% -h 90% "yazi"
 bind b display-popup -E -w 90% -h 90% "btop 2>/dev/null || htop 2>/dev/null || top"
@@ -802,6 +829,22 @@ os:
   editPreset: nvim
 LG
 print_step "Lazygit — Ayu Dark"
+
+mkdir -p "$HOME/.config/lazydocker"
+cat > "$HOME/.config/lazydocker/config.yml" << 'LDK'
+gui:
+  theme:
+    activeBorderColor:
+      - "#53bdfa"
+      - bold
+    inactiveBorderColor:
+      - "#8b949e"
+    optionsTextColor:
+      - "#cda1fa"
+    selectedLineBgColor:
+      - "#1b3a5b"
+LDK
+print_step "Lazydocker — Ayu Dark"
 
 ########################################################################
 # 10/13 — Git (guarded: never overwrites existing settings)
@@ -1294,7 +1337,6 @@ cat > "$SCRIPTS_DIR/tmux-ai" << 'S1'
 S="ai"; D="${1:-$(pwd)}"
 tmux has-session -t "$S" 2>/dev/null && { tmux attach -t "$S"; exit 0; }
 tmux new-session -d -s "$S" -n "claude" -c "$D"
-tmux new-window -t "$S" -n "codex" -c "$D"
 tmux new-window -t "$S" -n "gemini" -c "$D"
 tmux new-window -t "$S" -n "editor" -c "$D"
 tmux send-keys -t "$S:editor" "nvim ." Enter
@@ -1363,16 +1405,38 @@ echo -e "  📐 ${B}Panes${N}"
 echo -e "    ${C}Ctrl+A → |${N}  v-split   ${C}Ctrl+A → -${N}  h-split     ${C}Ctrl+A → z${N}  zoom"
 echo -e "    ${C}Ctrl+A → h/j/k/l${N}  navigate    ${C}Ctrl+A → H/J/K/L${N}  resize"
 echo -e "  🤖 ${B}AI Agents${N}"
-echo -e "    ${C}Ctrl+A → Ctrl+C${N}  Claude    ${C}Ctrl+A → Ctrl+X${N}  Codex"
+echo -e "    ${C}Ctrl+A → Ctrl+C${N}  Claude    ${C}Ctrl+A → Ctrl+G${N}  Gemini"
 echo -e "    ${C}Ctrl+A → A${N}  tmux-ai   ${C}Ctrl+A → P${N}  tmux-pair   ${C}Ctrl+A → R${N}  tmux-review"
 echo -e "  🔧 ${B}Tools${N}"
-echo -e "    ${C}Ctrl+A → g${N}  lazygit   ${C}Ctrl+A → f${N}  yazi   ${C}Ctrl+A → b${N}  btop   ${C}Ctrl+A → p${N}  float   ${C}Ctrl+A → T${N}  terminal"
+echo -e "    ${C}Ctrl+A → g${N}  lazygit   ${C}Ctrl+A → d${N}  lazydocker   ${C}Ctrl+A → f${N}  yazi   ${C}Ctrl+A → b${N}  btop"
+echo -e "    ${C}Ctrl+A → p${N}  float     ${C}Ctrl+A → T${N}  terminal"
 echo -e "  📋 ${B}Copy${N}  ${D}Ctrl+A → [  then v=select y=copy q=exit${N}"
 echo -e "  ${D}Disable: export TMUX_CHEAT=0 · Reload: Ctrl+A → r · Plugins: Ctrl+A → I${N}"
 echo ""
 S5
 chmod +x "$SCRIPTS_DIR/tmux-cheat"
 print_step "tmux-cheat"
+
+cat > "$SCRIPTS_DIR/toggle-focus" << 'TF'
+#!/bin/bash
+GC="$HOME/.config/ghostty/config"
+[[ ! -f "$GC" ]] && exit 1
+if grep -q "background-opacity.*=.*1.0" "$GC"; then
+  # It's opaque -> Make it transparent
+  sed -i '' -e 's/background-opacity.*=.*1.0/background-opacity      = 0.80/g' \
+            -e 's/background-blur.*=.*0/background-blur         = 20/g' \
+            -e 's/^# custom-shader/custom-shader/g' "$GC"
+  echo "👻 Ghostty: Transparent Mode"
+else
+  # It's transparent -> Make it opaque
+  sed -i '' -e 's/background-opacity.*=.*0.80/background-opacity      = 1.0/g' \
+            -e 's/background-blur.*=.*20/background-blur         = 0/g' \
+            -e 's/^custom-shader/# custom-shader/g' "$GC"
+  echo "🎯 Ghostty: Focus Mode (Opaque)"
+fi
+TF
+chmod +x "$SCRIPTS_DIR/toggle-focus"
+print_step "toggle-focus script (Ghostty)"
 
 ########################################################################
 # 13/13 — Master .zshrc
@@ -1490,6 +1554,9 @@ alias gds='git diff --staged'
 alias gco='git checkout'
 alias gb='git branch'
 
+alias ld='lazydocker'
+alias focus='toggle-focus'
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -1512,8 +1579,9 @@ alias timestamp='date +%Y%m%d_%H%M%S'
 [[ $- == *i* ]] && alias rm='trash'
 
 # ── Functions ────────────────────────────────────────────────
+unalias cc 2>/dev/null || true
+unalias gm 2>/dev/null || true
 function cc() { if [ -n "$TMUX" ]; then command claude "$@"; else local s="claude"; tmux has-session -t "$s" 2>/dev/null && tmux attach -t "$s" || tmux new-session -s "$s" -c "${PWD}" "claude $*; zsh"; fi; }
-function cx() { if [ -n "$TMUX" ]; then command codex "$@"; else local s="codex"; tmux has-session -t "$s" 2>/dev/null && tmux attach -t "$s" || tmux new-session -s "$s" -c "${PWD}" "codex $*; zsh"; fi; }
 function gm() { if [ -n "$TMUX" ]; then command gemini "$@"; else local s="gemini"; tmux has-session -t "$s" 2>/dev/null && tmux attach -t "$s" || tmux new-session -s "$s" -c "${PWD}" "gemini $*; zsh"; fi; }
 
 function ai() { local d="${1:-$PWD}"; [ -n "$TMUX" ] && { echo "▲ Already in tmux."; return; }; tmux-ai "$d"; }
@@ -1561,6 +1629,6 @@ echo -e "  ${c_bold}2.${c_reset} Cmd+Q Ghostty → reopen"
 echo -e "  ${c_bold}3.${c_reset} tmux → Ctrl+A I ${c_faint}(install plugins)${c_reset}"
 echo -e "  ${c_bold}4.${c_reset} nvim ${c_faint}(auto-installs lazyvim + ayu-dark + all plugins)${c_reset}"
 echo ""
-echo -e "  🤖 ${c_blue}cc${c_reset} Claude  ${c_blue}cx${c_reset} Codex  ${c_blue}gm${c_reset} Gemini  ${c_blue}ai${c_reset} Workspace  ${c_blue}lg${c_reset} Lazygit  ${c_blue}y${c_reset} Yazi"
+echo -e "  🤖 ${c_blue}cc${c_reset} Claude  ${c_blue}gm${c_reset} Gemini  ${c_blue}ai${c_reset} Workspace  ${c_blue}lg${c_reset} Lazygit  ${c_blue}y${c_reset} Yazi"
 echo -e "  🔧 ${c_green}wt${c_reset} Weather  ${c_green}ports${c_reset} Listeners  ${c_green}serve${c_reset} HTTP  ${c_green}update${c_reset} Brew  ${c_green}extract${c_reset} Archives"
 echo ""
